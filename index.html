@@ -18098,7 +18098,7 @@ function renderValueChain(){
     let cards='';
     teams.forEach(t=>{
       if(isOngoing(t)){ cards+=`<div class="vc-card vc-ong"><div class="vc-top"><span class="vc-nm">${t.name}</span></div><div class="vc-ong-b">Assessment ongoing</div></div>`; return; }
-      const ov=overall(t), st=ST(ov), L=lev(t.lever), fte=teamOptTotal(t);
+      const ov=overall(t), st=ST(ov), L=lev(t.lever), fte=t.opps.reduce((a,o)=>a+(o.fte[0]+o.fte[1])/2,0);
       cards+=`<div class="vc-card"><div class="vc-top"><span class="vc-nm">${t.name}</span><span class="vc-st" style="background:${st[2]};color:${st[1]}">${st[0]}</span></div>`
         +`<div class="vc-row"><span class="vc-sc"><b style="color:${scoreColor(ov)}">${ov.toFixed(1)}</b><span>/5 readiness</span></span><span class="vc-pot"><b>${fte.toFixed(1)}</b><span>FTE potential</span></span></div>`
         +`<div class="vc-bar"><i style="width:${ov/5*100}%;background:${scoreColor(ov)}"></i></div>`
@@ -18106,7 +18106,7 @@ function renderValueChain(){
     });
     cols+=`<div class="vc-col"><div class="vc-chev"><span class="vc-chev-nm">${g.name}</span><span class="vc-chev-avg">${davg?davg.toFixed(1)+' /5 avg':''}</span></div><div class="vc-cards">${cards}</div></div>`;
   });
-  el.innerHTML=`<div class="vc-head"><h2>Value chain — AI-readiness by stage</h2><p>Teams in value-chain order, grouped by division. <b>${wk.label}</b> is the weakest dimension org-wide (${wkv.toFixed(1)}/5) — a central data &amp; tech foundation is the No.1 cross-team move to unlock AI and automation.</p></div><div class="vc-wrap">${cols}</div>`;
+  el.innerHTML=`<div class="vc-head"><h2>Value chain — AI-readiness by stage</h2><p>Teams in value-chain order, grouped by division. <b>Data, digital &amp; AI</b> is the binding constraint on AI readiness (2.8/5 org-wide) — a central data &amp; tech foundation is the No.1 cross-team move to unlock AI and automation.</p></div><div class="vc-wrap">${cols}</div>`;
 }
 
 function renderSummary(){
