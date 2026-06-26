@@ -900,6 +900,37 @@ tr.flash > td { animation:flashbg 1.3s var(--ease); }
 .vs-field-in input{ flex:1; min-width:0; border:none; background:none; padding:10px 12px; font-family:var(--fh); font-weight:800; font-size:15px; color:var(--text); outline:none; }
 .vs-suf{ padding:0 13px 0 6px; font-size:12px; font-weight:700; color:var(--muted-2); }
 #demo-ribbon{position:fixed;bottom:14px;right:16px;z-index:99999;background:#B8620A;color:#fff;font:600 11px/1.3 system-ui,-apple-system,sans-serif;padding:7px 14px;border-radius:999px;box-shadow:0 4px 16px rgba(0,0,0,.20);letter-spacing:.02em;opacity:.95;pointer-events:none;max-width:88vw;}#sb-private-toggle{display:none!important;}
+
+  /* value chain tab */
+  .vc-head{margin-bottom:16px}
+  .vc-head h2{font-family:var(--fh,inherit);font-size:17px;font-weight:800;color:var(--text);margin:0 0 5px}
+  .vc-head p{font-size:12px;color:var(--muted);line-height:1.55;margin:0;max-width:1000px}
+  .vc-head p b{color:var(--text);font-weight:800}
+  .vc-wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .vc-col{display:flex;flex-direction:column;gap:10px}
+  .vc-chev{background:var(--navy);color:#fff;padding:11px 16px 11px 22px;display:flex;flex-direction:column;align-items:center;gap:2px;clip-path:polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%, 14px 50%)}
+  .vc-col:first-child .vc-chev{padding-left:16px;clip-path:polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%)}
+  .vc-chev-nm{font-family:var(--fh,inherit);font-weight:800;font-size:12.5px;letter-spacing:.2px;text-align:center;line-height:1.15}
+  .vc-chev-avg{font-size:9.5px;font-weight:700;color:rgba(255,255,255,.6)}
+  .vc-cards{display:flex;flex-direction:column;gap:9px}
+  .vc-card{background:var(--surface);border:1px solid var(--border-heavy);border-radius:10px;padding:11px 12px}
+  .vc-top{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:9px}
+  .vc-nm{font-family:var(--fh,inherit);font-weight:800;font-size:12px;color:var(--text);line-height:1.12}
+  .vc-st{font-size:8.5px;font-weight:800;letter-spacing:.3px;text-transform:uppercase;padding:2px 7px;border-radius:5px;white-space:nowrap}
+  .vc-row{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;margin-bottom:8px}
+  .vc-sc{display:flex;align-items:baseline;gap:3px}
+  .vc-sc b{font-family:var(--fh,inherit);font-size:22px;font-weight:900;line-height:1}
+  .vc-sc>span{font-size:8.5px;font-weight:700;color:var(--muted-2)}
+  .vc-pot{display:flex;align-items:baseline;gap:3px}
+  .vc-pot b{font-family:var(--fh,inherit);font-size:15px;font-weight:900;color:var(--text);line-height:1}
+  .vc-pot span{font-size:8.5px;font-weight:700;color:var(--muted-2)}
+  .vc-bar{height:6px;border-radius:4px;background:var(--surface-2);overflow:hidden;margin-bottom:9px}
+  .vc-bar i{display:block;height:100%;border-radius:4px}
+  .vc-lead{display:flex;align-items:center;gap:6px;padding-top:9px;border-top:1px solid var(--border-heavy)}
+  .vc-leaddot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+  .vc-leadlbl{font-size:10px;font-weight:700;color:var(--muted)}
+  .vc-card.vc-ong{opacity:.65}
+  .vc-ong-b{font-size:9px;font-weight:800;color:var(--muted-2);text-transform:uppercase;letter-spacing:.5px}
 </style>
 </head>
 <body>
@@ -916,6 +947,9 @@ tr.flash > td { animation:flashbg 1.3s var(--ease); }
     <a class="sb-link active" data-page="summary" onclick="nav('summary')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
       Executive Summary</a>
+    <a class="sb-link" data-page="valuechain" onclick="nav('valuechain')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 5l5 7-5 7"/><path d="M12 5l5 7-5 7"/></svg>
+      Value Chain</a>
     <a class="sb-link" data-page="roadmap" onclick="nav('roadmap')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19V5"/><path d="M4 7h11l-2-2 2-2"/><path d="M4 14h7l-2-2 2-2" transform="translate(0 5)"/></svg>
       Transformation Roadmap</a>
@@ -976,6 +1010,7 @@ tr.flash > td { animation:flashbg 1.3s var(--ease); }
     <div class="page" id="page-opportunities"></div>
     <div class="page" id="page-roadmap"></div>
     <div class="page" id="page-valuestake"></div>
+    <div class="page" id="page-valuechain"></div>
     <div class="page" id="page-teams"></div>
     <div class="page" id="page-progress"></div>
     <div class="page" id="page-engagement"></div>
@@ -17582,6 +17617,7 @@ let rendered={};
 function renderPage(id){
   if(id==='howto') renderHowTo();
   else if(id==='summary') renderSummary();
+  else if(id==='valuechain') renderValueChain();
   else if(id==='opportunities') renderOpportunities();
   else if(id==='roadmap') renderRoadmap();
   else if(id==='valuestake') renderValueStake();
@@ -18048,6 +18084,29 @@ function renderHowTo(){
         </tbody></table></div>
       </div>
     </div>`;
+}
+
+function renderValueChain(){
+  const el=document.getElementById('page-valuechain');
+  const avg=dimAverages(); let wk=DIMS[0],wkv=99; DIMS.forEach(d=>{ if(avg[d.key]<wkv){wkv=avg[d.key];wk=d;} });
+  const ST=ov=> ov>=3.3?['Ready','#1D7044','#E3F4EC']: ov>=2.8?['Developing','#B8620A','#FBEEDB']:['Foundation first','#C0392B','#FBE7E4'];
+  let cols='';
+  DIVISIONS.forEach(g=>{
+    const teams=g.teams.map(teamById).filter(Boolean);
+    const scored=teams.filter(t=>!isOngoing(t));
+    const davg=scored.length?scored.reduce((s,t)=>s+overall(t),0)/scored.length:0;
+    let cards='';
+    teams.forEach(t=>{
+      if(isOngoing(t)){ cards+=`<div class="vc-card vc-ong"><div class="vc-top"><span class="vc-nm">${t.name}</span></div><div class="vc-ong-b">Assessment ongoing</div></div>`; return; }
+      const ov=overall(t), st=ST(ov), L=lev(t.lever), fte=teamOptTotal(t);
+      cards+=`<div class="vc-card"><div class="vc-top"><span class="vc-nm">${t.name}</span><span class="vc-st" style="background:${st[2]};color:${st[1]}">${st[0]}</span></div>`
+        +`<div class="vc-row"><span class="vc-sc"><b style="color:${scoreColor(ov)}">${ov.toFixed(1)}</b><span>/5 readiness</span></span><span class="vc-pot"><b>${fte.toFixed(1)}</b><span>FTE potential</span></span></div>`
+        +`<div class="vc-bar"><i style="width:${ov/5*100}%;background:${scoreColor(ov)}"></i></div>`
+        +`<div class="vc-lead"><span class="vc-leaddot" style="background:${L.dot}"></span><span class="vc-leadlbl">Lead move: ${L.label}</span></div></div>`;
+    });
+    cols+=`<div class="vc-col"><div class="vc-chev"><span class="vc-chev-nm">${g.name}</span><span class="vc-chev-avg">${davg?davg.toFixed(1)+' /5 avg':''}</span></div><div class="vc-cards">${cards}</div></div>`;
+  });
+  el.innerHTML=`<div class="vc-head"><h2>Value chain — AI-readiness by stage</h2><p>Teams in value-chain order, grouped by division. <b>${wk.label}</b> is the weakest dimension org-wide (${wkv.toFixed(1)}/5) — a central data &amp; tech foundation is the No.1 cross-team move to unlock AI and automation.</p></div><div class="vc-wrap">${cols}</div>`;
 }
 
 function renderSummary(){
