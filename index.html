@@ -932,6 +932,28 @@ tr.flash > td { animation:flashbg 1.3s var(--ease); }
   .vc-card.vc-ong{opacity:.62}
   .vc-ong-b{font-size:9px;font-weight:800;color:var(--muted-2);text-transform:uppercase;letter-spacing:.5px;margin:auto 0}
   .vc-empty{min-height:150px;visibility:hidden}
+
+  .vc-tip{display:none;position:fixed;z-index:9999;width:264px;background:var(--surface);border:1px solid var(--border-heavy);border-radius:12px;box-shadow:0 18px 50px rgba(15,30,60,.30);padding:13px 14px;pointer-events:none}
+  .vct-hd{font-family:var(--fh,inherit);font-weight:800;font-size:13px;color:var(--text);display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:8px}
+  .vct-dept{font-size:9px;font-weight:700;color:var(--muted-2);text-transform:uppercase;letter-spacing:.3px;white-space:nowrap}
+  .vct-ong{font-size:9.5px;font-weight:700;color:var(--muted-2);margin:-3px 0 8px}
+  .vct-pot{font-size:11px;color:var(--muted);margin-bottom:11px}
+  .vct-pot b{color:var(--text);font-weight:800}
+  .vct-sec{font-size:8px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--muted-2);margin-bottom:7px}
+  .vct-dims{margin-bottom:11px}
+  .vct-dr{display:flex;align-items:center;gap:7px;margin-bottom:6px}
+  .vct-dr:last-child{margin-bottom:0}
+  .vct-dl{font-size:10px;color:var(--muted);width:90px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .vct-bk{flex:1;height:8px;border-radius:3px;background:var(--surface-2);overflow:hidden}
+  .vct-bk i{display:block;height:100%;border-radius:3px}
+  .vct-dv{font-family:var(--fh,inherit);font-size:10px;font-weight:900;width:9px;text-align:right;color:var(--text)}
+  .vct-lead{font-size:10.5px;color:var(--muted);display:flex;align-items:center;gap:6px;padding:9px 0;border-top:1px solid var(--border-heavy);border-bottom:1px solid var(--border-heavy);margin-bottom:9px}
+  .vct-lead b{color:var(--text);font-weight:800}
+  .vct-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+  .vct-ki{list-style:none;margin:0;padding:0}
+  .vct-ki li{font-size:10px;color:var(--muted);line-height:1.3;display:flex;align-items:flex-start;gap:6px;margin-bottom:4px}
+  .vct-kd{width:5px;height:5px;border-radius:50%;margin-top:4px;flex-shrink:0}
+  .vct-ki li:last-child{margin-bottom:0}
 </style>
 </head>
 <body>
@@ -18087,6 +18109,33 @@ function renderHowTo(){
     </div>`;
 }
 
+function vcTipHtml(t){
+  const fte=t.opps.reduce((a,o)=>a+(o.fte[0]+o.fte[1])/2,0);
+  const aiFte=t.opps.filter(o=>['aiacc','aienh'].includes(o.lever)).reduce((a,o)=>a+(o.fte[0]+o.fte[1])/2,0);
+  const aiPct=fte?Math.round(aiFte/fte*100):0;
+  const L=lev(t.lever);
+  const dims=DIMS.map(d=>{ const s=t.scores[d.key]; return `<div class="vct-dr"><span class="vct-dl">${d.short||d.label}</span><span class="vct-bk"><i style="width:${s/5*100}%;background:${scoreColor(s)}"></i></span><span class="vct-dv">${s}</span></div>`; }).join('');
+  const ki=t.opps.slice().sort((a,b)=>(b.fte[0]+b.fte[1])-(a.fte[0]+a.fte[1])).slice(0,3).map(o=>`<li><span class="vct-kd" style="background:${lev(o.lever).dot}"></span>${o.activity}</li>`).join('');
+  const ong=isOngoing(t)?`<div class="vct-ong">Assessment ongoing &mdash; scores indicative</div>`:'';
+  return `<div class="vct-hd">${t.name}<span class="vct-dept">${t.dept}</span></div>`+ong
+    +`<div class="vct-pot"><b>${fte.toFixed(1)} FTE</b> automation potential &middot; <b>${aiPct}%</b> AI-addressable</div>`
+    +`<div class="vct-sec">6 dimensions &middot; readiness</div><div class="vct-dims">${dims}</div>`
+    +`<div class="vct-lead"><span class="vct-dot" style="background:${L.dot}"></span>Lead move: <b>${L.label}</b></div>`
+    +`<div class="vct-sec">Key initiatives</div><ul class="vct-ki">${ki}</ul>`;
+}
+function vcWireTips(el){
+  const tip=el.querySelector('#vc-tip'), grid=el.querySelector('.vc-grid');
+  if(!tip||!grid) return;
+  function place(card){ const t=teamById(card.getAttribute('data-team')); if(!t){tip.style.display='none';return;} tip.innerHTML=vcTipHtml(t); tip.style.display='block';
+    const r=card.getBoundingClientRect(), tw=tip.offsetWidth, th=tip.offsetHeight;
+    let left=r.right+10; if(left+tw>window.innerWidth-8) left=r.left-tw-10; if(left<8) left=8;
+    let top=r.top; if(top+th>window.innerHeight-8) top=window.innerHeight-th-8; if(top<8) top=8;
+    tip.style.left=left+'px'; tip.style.top=top+'px';
+  }
+  grid.addEventListener('mouseover',e=>{ const c=e.target.closest('.vc-card'); if(c&&grid.contains(c)) place(c); });
+  grid.addEventListener('mouseout',e=>{ const c=e.target.closest('.vc-card'); const to=e.relatedTarget; if(c&&(!to||!c.contains(to))) tip.style.display='none'; });
+}
+
 function renderValueChain(){
   const el=document.getElementById('page-valuechain');
   const ST=ov=> ov>=3.3?['Ready','#1D7044','#E3F4EC']: ov>=2.8?['Developing','#B8620A','#FBEEDB']:['Foundation','#C0392B','#FBE7E4'];
@@ -18106,16 +18155,17 @@ function renderValueChain(){
   for(let r=0;r<maxRows;r++){ for(let i=0;i<STAGES.length;i++){ const t=stageTeams[i][r];
     if(!t){ cells+='<div class="vc-empty"></div>'; continue; }
     const go="nav('teams');pickTeam('"+t.id+"')";
-    if(isOngoing(t)){ cells+=`<div class="vc-card vc-ong" onclick="${go}" role="button" tabindex="0"><div class="vc-nm">${t.name}</div><div class="vc-ong-b">Assessment ongoing</div></div>`; continue; }
+    if(isOngoing(t)){ cells+=`<div class="vc-card vc-ong" data-team="${t.id}" onclick="${go}" role="button" tabindex="0"><div class="vc-nm">${t.name}</div><div class="vc-ong-b">Assessment ongoing</div></div>`; continue; }
     const ov=overall(t), st=ST(ov), L=lev(t.lever), fte=t.opps.reduce((a,o)=>a+(o.fte[0]+o.fte[1])/2,0);
-    cells+=`<div class="vc-card" onclick="${go}" role="button" tabindex="0">`
+    cells+=`<div class="vc-card" data-team="${t.id}" onclick="${go}" role="button" tabindex="0">`
       +`<div class="vc-nm">${t.name}</div>`
       +`<span class="vc-st" style="background:${st[2]};color:${st[1]}">${st[0]}</span>`
       +`<div class="vc-row"><span class="vc-sc"><b style="color:${scoreColor(ov)}">${ov.toFixed(1)}</b><span>/5</span></span><span class="vc-pot"><b>${fte.toFixed(1)}</b><span>FTE</span></span></div>`
       +`<div class="vc-bar"><i style="width:${ov/5*100}%;background:${scoreColor(ov)}"></i></div>`
       +`<div class="vc-lead"><span class="vc-leaddot" style="background:${L.dot}"></span><span class="vc-leadlbl">${L.label}</span></div></div>`;
   }}
-  el.innerHTML=`<div class="vc-head"><h2>Value chain view — AI-readiness by stage</h2><p>The 16 teams mapped onto the value chain. <b>Data, digital &amp; AI</b> is the binding constraint on AI readiness (2.8/5 org-wide) — a central data &amp; tech foundation is the No.1 cross-team move to unlock AI and automation. <span class="vc-hint">Click a team to open its deep-dive.</span></p></div><div class="vc-grid">${cells}</div>`;
+  el.innerHTML=`<div class="vc-head"><h2>Value chain view — AI-readiness by stage</h2><p>The 16 teams mapped onto the value chain. <b>Data, digital &amp; AI</b> is the binding constraint on AI readiness (2.8/5 org-wide) — a central data &amp; tech foundation is the No.1 cross-team move to unlock AI and automation. <span class="vc-hint">Hover a team for full detail &middot; click to open its deep-dive.</span></p></div><div class="vc-grid">${cells}</div><div id="vc-tip" class="vc-tip"></div>`;
+  vcWireTips(el);
 }
 
 function renderSummary(){
