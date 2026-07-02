@@ -19374,13 +19374,88 @@ const APPROACH_BLURB={
 // ===== Analyses inventory — artifacts each producer skill emits per lens =====
 const ARTIFACTS=(window.__QS_DATA__&&window.__QS_DATA__.artifacts)||{counts:{total:0,produced:0,planned:0},artifacts:[]};
 function teamArtifacts(tid){ return (ARTIFACTS.artifacts||[]).filter(a=>a.team===tid); }
+// ===== Performance Wheel — real evidence instrument (mgmt lens), rendered in-dashboard =====
+// One team is built out end-to-end (Actuarial & Pricing) as a worked example to drill into.
+const PW_WHEELS = {
+  ap: {
+    teamName: 'Actuarial & Pricing',
+    source: 'Management interviews (team lead + 2 senior actuaries) & document review · 21 May 2026',
+    keyMessage: 'A genuinely strong performance system — relevant KPIs, reliable data and rigorous model-validation dialogues underpin its high maturity. Two moves take it from strong to best-in-class: a live intra-cycle performance board (steering is still quarterly-review-led), and structured recognition of efficiency gains, not just technical wins.',
+    aspects: [
+      { label:'Metrics & Objectives', q:'Translated into the right metrics & targets?', segments:[
+        { name:'KPI relevance & definition', score:4, points:['Loss-ratio, combined-ratio and pricing-adequacy KPIs are well defined and actively steer the team.','Operational cycle-time KPIs (data-prep, model-refresh) are not yet tracked.'] },
+        { name:'Targets (SMART)', score:4, points:['SMART targets on pricing adequacy and model accuracy, reviewed each cycle.','No explicit target on the 6-week model-refresh lead time (ambition is 3).'] },
+        { name:'Cascade & end-to-end', score:4, points:['Team KPIs cascade cleanly into the combined-ratio objective.','No shared price-to-bind metric with Underwriting — a cross-team blind spot.'] }
+      ]},
+      { label:'Performance Tracking', q:'Do we measure & visualise them?', segments:[
+        { name:'Data availability & quality', score:5, points:['Reliable exposure and loss data via the SQL warehouse, used daily.','Single source of truth; minimal manual reconciliation.'] },
+        { name:'Visual management', score:3, points:['Performance is steered through structured quarterly model reviews.','No live intra-cycle board — drift is caught at review, not in the moment.'] },
+        { name:'Frequency & ownership', score:4, points:['Clear quarterly + ad-hoc cadence fits the modelling cycle.','Metrics owned by two senior actuaries — some key-person concentration.'] }
+      ]},
+      { label:'Performance Dialogues', q:'Do we discuss performance & solve problems?', segments:[
+        { name:'Routine & structure', score:4, points:['Disciplined model-validation and peer-review rituals are embedded.','A dedicated team performance huddle is less formalised.'] },
+        { name:'Problem-solving & follow-up', score:5, points:['Rigorous backtesting and root-cause on model drift, with tracked actions.','Recurring issues get closed, not re-litigated cycle after cycle.'] },
+        { name:'Presence & coaching', score:4, points:['Lead is technically close and mentors juniors on modelling.','Protected continuous-improvement time is limited.'] }
+      ]},
+      { label:'Consequences & Recognition', q:'Do we act, reward & recognise?', segments:[
+        { name:'Accountability & decision rights', score:5, points:['Crisp model sign-off accountability; decision rights are clear.','Ownership is felt end-to-end through to the pricing decision.'] },
+        { name:'Reward & consequence mgmt', score:4, points:['Reward is linked to technical quality and pricing outcomes.','Efficiency and cycle-time gains are not yet part of the reward lens.'] },
+        { name:'Recognition & celebration', score:3, points:['Technical wins (pricing accuracy) are acknowledged in model reviews.','Process and efficiency improvements pass largely unrecognised.'] }
+      ]}
+    ]
+  }
+};
+const PW_C = { green:'#2F8F6B', amber:'#D49A3A', red:'#D2645A', na:'#9AA4B0' };
+function pwSegRag(s){ return s==null?'na':(s<=2?'red':(s===3?'amber':'green')); }
+function pwAggRag(v){ return v==null?'na':(v<2.5?'red':(v<3.5?'amber':'green')); }
+function pwMean(arr){ const f=arr.filter(x=>x!=null); return f.length?f.reduce((a,b)=>a+b,0)/f.length:null; }
+function pwEsc(e){ if(e.key==='Escape') closePerfWheel(); }
+function closePerfWheel(){ const ov=document.getElementById('pw-modal'); if(ov) ov.remove(); document.removeEventListener('keydown',pwEsc); }
+function openPerfWheel(tid){
+  const W=PW_WHEELS[tid]; if(!W) return;
+  const C=PW_C, cx=140, cy=140, ri=64, ro=120, n=W.aspects.length, slot=360/n, gap=5;
+  const polar=(r,d)=>{ const a=(d-90)*Math.PI/180; return [ (cx+r*Math.cos(a)).toFixed(1), (cy+r*Math.sin(a)).toFixed(1) ]; };
+  const sect=(a0,a1)=>{ const p0=polar(ro,a0),p1=polar(ro,a1),p2=polar(ri,a1),p3=polar(ri,a0),la=(a1-a0)>180?1:0; return `M${p0[0]} ${p0[1]} A${ro} ${ro} 0 ${la} 1 ${p1[0]} ${p1[1]} L${p2[0]} ${p2[1]} A${ri} ${ri} 0 ${la} 0 ${p3[0]} ${p3[1]} Z`; };
+  const overall=pwMean(W.aspects.reduce((a,as)=>a.concat(as.segments.map(s=>s.score)),[]));
+  let arcs='', badges='';
+  W.aspects.forEach((as,i)=>{ const v=pwMean(as.segments.map(s=>s.score)); const col=C[pwAggRag(v)]; const a0=i*slot+gap/2, a1=(i+1)*slot-gap/2; arcs+=`<path d="${sect(a0,a1)}" fill="${col}"/>`; const bp=polar((ri+ro)/2,(a0+a1)/2); badges+=`<circle cx="${bp[0]}" cy="${bp[1]}" r="13" fill="#fff"/><text x="${bp[0]}" y="${(+bp[1]+4).toFixed(1)}" text-anchor="middle" font-size="13" font-weight="700" fill="${col}">${i+1}</text>`; });
+  const wheel=`<svg viewBox="0 0 280 280" width="256" height="256" style="max-width:100%">${arcs}${badges}<text x="140" y="134" text-anchor="middle" font-size="36" font-weight="800" fill="var(--text)">${overall.toFixed(1)}</text><text x="140" y="154" text-anchor="middle" font-size="11.5" fill="var(--muted)">of 5 · Mgmt systems</text></svg>`;
+  const pill=(v)=>{ const r=pwAggRag(v); const bg={green:'rgba(47,143,107,.15)',amber:'rgba(212,154,58,.18)',red:'rgba(210,100,90,.16)',na:'rgba(154,164,176,.16)'}[r]; const fg={green:'#2F8F6B',amber:'#B07A1E',red:'#C2483D',na:'#6B7480'}[r]; return `<span style="font-size:11.5px;font-weight:700;padding:2px 10px;border-radius:999px;background:${bg};color:${fg}">${v==null?'n/a':v.toFixed(1)+'/5'}</span>`; };
+  const cards=W.aspects.map((as,i)=>{
+    const v=pwMean(as.segments.map(s=>s.score));
+    const segs=as.segments.map(sg=>{ const r=pwSegRag(sg.score); const pts=(sg.points||[]).map(p=>`<li style="position:relative;padding-left:13px;margin:3px 0;font-size:12px;color:var(--muted);line-height:1.45"><span style="position:absolute;left:0;top:7px;width:5px;height:5px;border-radius:50%;background:${C[r]};opacity:.6"></span>${p}</li>`).join('');
+      return `<div style="margin-top:10px"><div style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:${C[r]};flex:none"></span><span style="flex:1;font-size:13px;font-weight:600;color:var(--text)">${sg.name}</span><span style="font-size:12.5px;font-weight:700;color:${C[r]}">${sg.score==null?'n/a':sg.score+'/5'}</span></div><ul style="list-style:none;margin:2px 0 0;padding:0">${pts}</ul></div>`; }).join('');
+    return `<div style="background:var(--surface-2,rgba(0,0,0,.02));border:1px solid var(--border-heavy,#e1e6ee);border-radius:14px;padding:13px 15px"><div style="display:flex;align-items:center;gap:8px"><span style="width:22px;height:22px;border-radius:50%;background:var(--navy,#0B2347);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none">${i+1}</span><span style="flex:1;font-size:14.5px;font-weight:700;color:var(--text)">${as.label}</span>${pill(v)}</div><div style="font-size:11px;color:var(--muted);margin-top:2px">${as.q||''}</div>${segs}</div>`;
+  }).join('');
+  const legend=`<div style="display:flex;gap:7px;align-items:center;font-size:11px;color:var(--muted);flex-wrap:wrap"><b style="color:var(--text)">Legend:</b><span style="padding:2px 8px;border-radius:999px;background:rgba(47,143,107,.15);color:#2F8F6B;font-weight:600">● Good 4–5</span><span style="padding:2px 8px;border-radius:999px;background:rgba(212,154,58,.18);color:#B07A1E;font-weight:600">● Fair 3</span><span style="padding:2px 8px;border-radius:999px;background:rgba(210,100,90,.16);color:#C2483D;font-weight:600">● Weak 1–2</span></div>`;
+  let ov=document.getElementById('pw-modal'); if(ov) ov.remove();
+  ov=document.createElement('div'); ov.id='pw-modal';
+  ov.style.cssText='position:fixed;inset:0;background:rgba(8,15,30,.55);z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:32px 20px;overflow:auto';
+  ov.innerHTML=`<div role="dialog" aria-modal="true" style="background:var(--surface,#fff);color:var(--text);width:min(1060px,96%);border-radius:18px;box-shadow:0 30px 80px -20px rgba(0,0,0,.5);padding:24px 30px 20px;position:relative">
+    <button onclick="closePerfWheel()" aria-label="Close" style="position:absolute;top:14px;right:18px;border:none;background:transparent;font-size:24px;color:var(--muted);cursor:pointer;line-height:1">×</button>
+    <div style="font-size:11px;letter-spacing:1px;font-weight:700;color:var(--green,#1C7A4A);text-transform:uppercase">Performance Wheel · Management Systems</div>
+    <div style="font-size:19px;font-weight:800;color:var(--text);margin:3px 0 4px">${W.teamName}</div>
+    <div style="font-size:13px;color:var(--muted);line-height:1.5;max-width:920px;margin-bottom:16px">${W.keyMessage}</div>
+    <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
+      <div style="flex:none;display:flex;flex-direction:column;align-items:center;gap:6px;width:256px;margin:0 auto">${wheel}<div style="font-size:11px;color:var(--muted);text-align:center;max-width:240px">4 aspects · 12 subdimensions scored 1–5</div></div>
+      <div style="flex:1;min-width:300px;display:grid;grid-template-columns:1fr 1fr;gap:12px">${cards}</div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;margin-top:16px;padding-top:12px;border-top:1px solid var(--border-heavy,#e1e6ee);flex-wrap:wrap"><span style="font-size:11px;color:var(--muted)"><b style="color:var(--text)">Source:</b> ${W.source}</span>${legend}</div>
+  </div>`;
+  ov.addEventListener('click',e=>{ if(e.target===ov) closePerfWheel(); });
+  document.body.appendChild(ov);
+  document.addEventListener('keydown',pwEsc);
+}
 function artifactCard(r){
   const on=r.status==='produced';
   const pstat=r.pstat||((METHODOLOGY.instruments[r.instrument]||{}).producer||{}).status||'';
+  const hasWheel = r.instrument==='performance-wheel' && typeof PW_WHEELS!=='undefined' && PW_WHEELS[r.team];
   const open=on
-    ? (r.openTab
-        ? `<button class="artf-open" onclick="setTeamSub('${r.openTab}')">Open analysis →</button>`
-        : `<a class="artf-open" href="${r.path}" target="_blank" rel="noopener">Open analysis →</a>`)
+    ? (hasWheel
+        ? `<button class="artf-open" onclick="openPerfWheel('${r.team}')">Open analysis →</button>`
+        : r.openTab
+          ? `<button class="artf-open" onclick="setTeamSub('${r.openTab}')">Open analysis →</button>`
+          : `<a class="artf-open" href="${r.path}" target="_blank" rel="noopener">Open analysis →</a>`)
     : `<span class="artf-plan">Not yet produced${pstat?` · skill ${pstat}`:''}</span>`;
   return `<div class="artf-card ${on?'is-on':'is-off'}">
     <div class="artf-top"><span class="artf-badge ${on?'b-on':'b-off'}">${on?'Produced':'Planned'}</span></div>
