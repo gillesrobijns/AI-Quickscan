@@ -19380,8 +19380,12 @@ const PW_WHEELS = {
   ap: {
     teamName: 'Actuarial & Pricing',
     source: 'Management interviews (team lead + 2 senior actuaries) & document review · 21 May 2026',
-    keyMessage: 'A genuinely strong performance system — relevant KPIs, reliable data and rigorous model-validation dialogues underpin its high maturity. Two moves take it from strong to best-in-class: a live intra-cycle performance board (steering is still quarterly-review-led), and structured recognition of efficiency gains, not just technical wins.',
+    keyMessage: 'A strong performance system on relevant KPIs, reliable data and rigorous model dialogues. Two moves reach best-in-class: a live intra-cycle board and structured recognition of efficiency gains.',
     aspects: [
+      { label:'Mission & Vision', q:'Is the mission & vision clear?', segments:[
+        { name:'Strategy & ambition', score:4, points:['A clear pricing and reserving ambition is set and well understood across the team.','The link to the combined-ratio target is explicit and steers day-to-day priorities.'] },
+        { name:'Translation to daily work', score:4, points:['Actuaries connect daily modelling work to the adequacy and profitability goals.','The 6-week model-refresh ambition is understood but not yet a shared team target.'] }
+      ]},
       { label:'Metrics & Objectives', q:'Translated into the right metrics & targets?', segments:[
         { name:'KPI relevance & definition', score:4, points:['Loss-ratio, combined-ratio and pricing-adequacy KPIs are well defined and actively steer the team.','Operational cycle-time KPIs (data-prep, model-refresh) are not yet tracked.'] },
         { name:'Targets (SMART)', score:4, points:['SMART targets on pricing adequacy and model accuracy, reviewed each cycle.','No explicit target on the 6-week model-refresh lead time (ambition is 3).'] },
