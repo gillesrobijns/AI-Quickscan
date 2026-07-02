@@ -19376,9 +19376,11 @@ const ARTIFACTS=(window.__QS_DATA__&&window.__QS_DATA__.artifacts)||{counts:{tot
 function teamArtifacts(tid){ return (ARTIFACTS.artifacts||[]).filter(a=>a.team===tid); }
 function artifactCard(r){
   const on=r.status==='produced';
-  const pstat=((METHODOLOGY.instruments[r.instrument]||{}).producer||{}).status||'';
+  const pstat=r.pstat||((METHODOLOGY.instruments[r.instrument]||{}).producer||{}).status||'';
   const open=on
-    ? `<a class="artf-open" href="${r.path}" target="_blank" rel="noopener">Open analysis →</a>`
+    ? (r.openTab
+        ? `<button class="artf-open" onclick="setTeamSub('${r.openTab}')">Open analysis →</button>`
+        : `<a class="artf-open" href="${r.path}" target="_blank" rel="noopener">Open analysis →</a>`)
     : `<span class="artf-plan">Not yet produced${pstat?` · skill ${pstat}`:''}</span>`;
   return `<div class="artf-card ${on?'is-on':'is-off'}">
     <div class="artf-top"><span class="artf-badge ${on?'b-on':'b-off'}">${on?'Produced':'Planned'}</span></div>
@@ -19409,20 +19411,27 @@ function analysesPage(t){
       <div class="artf-grid">${rs.map(artifactCard).join('')}</div>
     </div>`;
   }).join('');
-  // Team-wide registers — opportunities & pain points aggregated across all six dimensions, at team level
-  const twRows=byLens['team']||[];
-  const twGroup=twRows.length?`<div class="artf-group">
+  // Team-wide & baseline — run once per team: baselining (MAE, OTE) + cross-dimension registers.
+  // MAE is the Baseline Activity Map already built into the dashboard, so it's produced and opens that tab.
+  const baseInstr=[
+    { instrument:'mae', label:'Activity map (MAE)', producedBy:'mae-builder', status:'produced', openTab:'baseline', producedAt:'2026-06-27', pstat:'live' },
+    { instrument:'ote-waterfall', label:'OTE — Overall Team Efficiency', producedBy:'ote-waterfall-builder', status:'planned', pstat:'envisioned' }
+  ];
+  const twAll=baseInstr.concat(byLens['team']||[]);
+  const twGroup=twAll.length?`<div class="artf-group">
       <div class="artf-grp-head">
         <div class="artf-grp-dim" style="--dc:#5B4B8A;cursor:default;">
-          <span class="di">T</span><span>Team-wide registers</span>
-          <span class="artf-grp-note" style="font-size:11px;color:var(--muted-2);font-weight:500;margin-left:8px;">aggregated across all six dimensions</span>
+          <span class="di">T</span><span>Team-wide &amp; baseline</span>
+          <span class="artf-grp-note" style="font-size:11px;color:var(--muted-2);font-weight:500;margin-left:8px;">run once per team — baselining &amp; cross-dimension registers</span>
         </div>
-        <span class="artf-grp-cnt">${twRows.filter(r=>r.status==='produced').length}/${twRows.length} produced</span>
+        <span class="artf-grp-cnt">${twAll.filter(r=>r.status==='produced').length}/${twAll.length} produced</span>
       </div>
-      <div class="artf-grid">${twRows.map(artifactCard).join('')}</div>
+      <div class="artf-grid">${twAll.map(artifactCard).join('')}</div>
     </div>`:'';
+  const totalCnt=rows.length+baseInstr.length;
+  const prodCnt=prod+baseInstr.filter(r=>r.status==='produced').length;
   return `<div class="dd-section"><div class="eyebrow">Analyses · evidence</div>
-    <div class="artf-head">The specific instruments run on each dimension — the evidence behind the readiness scores. <b>${prod}</b> of ${rows.length} produced. Each dimension links up to its <button class="artf-inline-link" onclick="setTeamSub('diagnostic')">AI-readiness overview</button>; produced analyses open as a standalone view.</div>
+    <div class="artf-head">The specific instruments run on each dimension — the evidence behind the readiness scores. <b>${prodCnt}</b> of ${totalCnt} produced. Each dimension links up to its <button class="artf-inline-link" onclick="setTeamSub('diagnostic')">AI-readiness overview</button>; produced analyses open as a standalone view.</div>
     ${groups}${twGroup}</div>`;
 }
 const DEPTH=[
