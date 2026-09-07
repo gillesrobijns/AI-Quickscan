@@ -928,6 +928,9 @@ tr.flash > td { animation:flashbg 1.3s var(--ease); }
   .vc-pot span{font-size:8.5px;font-weight:700;color:var(--muted-2)}
   .vc-bar{height:6px;border-radius:4px;background:var(--surface-2);overflow:hidden;margin-bottom:9px}
   .vc-bar i{display:block;height:100%;border-radius:4px}
+  .vc-mlbl{display:flex;justify-content:space-between;align-items:baseline;font-size:8px;font-weight:800;color:var(--muted-2);letter-spacing:.04em;text-transform:uppercase;margin-bottom:2px}
+  .vc-bar.lean{margin-bottom:7px}
+  .vc-bar.rdy{margin-bottom:9px}
   .vc-lead{display:flex;align-items:center;gap:6px;margin-top:auto;padding-top:9px;border-top:1px solid var(--border-heavy)}
   .vc-leaddot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
   .vc-leadlbl{font-size:9.5px;font-weight:700;color:var(--muted);line-height:1.1}
@@ -1460,7 +1463,7 @@ window.__QS_DATA__ = {
  "schemaVersion": 1,
  "id": "nr-inside-out",
  "version": "2026.2",
- "label": "NR Inside-Out AI-Readiness",
+ "label": "NR Inside-Out Quickscan",
  "note": "Methodology library - v2026.2 real OPEX toolkit. One maturity engine (LMA) scores every dimension on its sub-axes; going deeper connects additional toolkit analyses. Opportunity & pain-point registers are team-wide (aggregate across all six dimensions).",
  "instrumentTypes": {
   "question-set": {
@@ -5203,7 +5206,7 @@ window.__QS_DATA__ = {
    "lead": "Nova Reperta — engagement team (illustrative)",
    "start": "5 May 2026",
    "target": "30 June 2026",
-   "scope": "Inside-out AI-readiness quickscan across 16 operational teams (468 FTE) in the Belgian P&C entity.",
+   "scope": "Inside-out quickscan across 16 operational teams (468 FTE) in the Belgian P&C entity, covering both lean maturity and AI readiness.",
    "notes": "Client strategic priority: AI readiness. ExCom decision on 2027 transformation budget expected early July."
   },
   "weights": {
@@ -19133,7 +19136,7 @@ const TEAMS = window.__QS_DATA__?.teams || [
 const ENGAGEMENT = window.__QS_DATA__?.engagement?.engagement || {
   client:'Ethias (demo)', lead:'Nova Reperta — engagement team (illustrative)',
   start:'5 May 2026', target:'30 June 2026',
-  scope:'Inside-out AI-readiness quickscan across 16 operational teams (468 FTE) in the Belgian P&C entity.',
+  scope:'Inside-out quickscan across 16 operational teams (468 FTE) in the Belgian P&C entity, covering both lean maturity and AI readiness.',
   notes:'Client strategic priority: AI readiness. ExCom decision on 2027 transformation budget expected early July.',
 };
 
@@ -19283,7 +19286,7 @@ function teamPanel(id){
       </div>
       <div style="font-size:11.5px;color:var(--muted);">Priority rank #${t.priority} of ${TEAMS.length} · ${t.fte} FTE · ${t.dept}</div>
     </div>
-    <div class="psec"><div class="psec-l">AI-readiness assessment</div><canvas id="panel-radar" height="210"></canvas></div>
+    <div class="psec"><div class="psec-l">Lean maturity assessment</div><canvas id="panel-radar" height="210"></canvas></div>
     <div class="psec"><div class="psec-l">Scores by dimension</div>${bars}</div>
     <div class="psec"><div class="psec-l">Key finding</div>
       <div style="font-family:var(--fh);font-size:14px;font-weight:700;line-height:1.45;margin-bottom:9px;">${t.finding}</div>
@@ -19347,7 +19350,7 @@ function setRoadGroup(m){ if(m===roadGroup) return; roadGroup=m; try{ localStora
 
 /* ===================== ANALYSIS CONFIGURATOR ===================== */
 const METHODOLOGY = window.__QS_DATA__?.methodology || {
-  label:'NR Inside-Out AI-Readiness', version:'2026.1',
+  label:'NR Inside-Out Quickscan', version:'2026.1',
   instruments:{
     'lens-questions':{label:'Light lens questionnaire', type:'question-set', scoreSource:true},
     'maturity-wheel':{label:'Dimension maturity wheel', type:'rated-wheel', scoreSource:true},
@@ -19449,7 +19452,7 @@ function artifactCard(r){
   </div>`;
 }
 // the Analyses sub-page — the specific instruments that evidence each dimension's score,
-// grouped by dimension and linked up to the AI-readiness overview
+// grouped by dimension and linked up to the lean maturity overview
 function analysesPage(t){
   const rows=teamArtifacts(t.id);
   if(!rows.length) return `<div class="dd-section"><div class="eyebrow">Analyses · evidence</div>
@@ -19460,7 +19463,7 @@ function analysesPage(t){
     const rs=byLens[d.key]; const sc=t.scores[d.key]; const gp=rs.filter(r=>r.status==='produced').length;
     return `<div class="artf-group">
       <div class="artf-grp-head">
-        <button class="artf-grp-dim" onclick="dimSel='${d.key}';setTeamSub('diagnostic');" title="See this dimension in the AI-readiness overview" style="--dc:${d.color};">
+        <button class="artf-grp-dim" onclick="dimSel='${d.key}';setTeamSub('diagnostic');" title="See this dimension in the lean maturity overview" style="--dc:${d.color};">
           <span class="di">${d.icon}</span><span>${d.label}</span>
           ${sc!=null?`<span class="dimf-sc" style="background:${scoreColor(sc)};color:${scoreText(sc)};">${sc}</span>`:''}
           <span class="artf-grp-arrow">↑ overview</span>
@@ -19474,7 +19477,7 @@ function analysesPage(t){
   // MAE is the Baseline Activity Map already built into the dashboard, so it's produced and opens that tab.
   const baseInstr=[
     { instrument:'mae', label:'Activity map (MAE)', producedBy:'mae-builder', status:'produced', openTab:'baseline', producedAt:'2026-06-27', pstat:'live' },
-    { instrument:'ote-waterfall', label:'OTE — Overall Team Efficiency', producedBy:'ote-waterfall-builder', status:'planned', pstat:'envisioned' }
+    { instrument:'ote-waterfall', label:'OTE — Overall Team Efficiency', producedBy:'ote-waterfall-builder', status:'planned', pstat:'live' }
   ];
   const twAll=baseInstr.concat(byLens['team']||[]);
   const twGroup=twAll.length?`<div class="artf-group">
@@ -19490,7 +19493,7 @@ function analysesPage(t){
   const totalCnt=rows.length+baseInstr.length;
   const prodCnt=prod+baseInstr.filter(r=>r.status==='produced').length;
   return `<div class="dd-section"><div class="eyebrow">Analyses · evidence</div>
-    <div class="artf-head">The specific instruments run on each dimension — the evidence behind the readiness scores. <b>${prodCnt}</b> of ${totalCnt} produced. Each dimension links up to its <button class="artf-inline-link" onclick="setTeamSub('diagnostic')">AI-readiness overview</button>; produced analyses open as a standalone view.</div>
+    <div class="artf-head">The specific instruments run on each dimension — the evidence behind the readiness scores. <b>${prodCnt}</b> of ${totalCnt} produced. Each dimension links up to its <button class="artf-inline-link" onclick="setTeamSub('diagnostic')">Lean maturity overview</button>; produced analyses open as a standalone view.</div>
     ${groups}${twGroup}</div>`;
 }
 const DEPTH=[
@@ -19823,6 +19826,9 @@ function vcWireTips(el){
 function renderValueChain(){
   const el=document.getElementById('page-valuechain');
   const ST=ov=> ov>=3.3?['Ready','#1D7044','#E3F4EC']: ov>=2.8?['Developing','#B8620A','#FBEEDB']:['Foundation','#C0392B','#FBE7E4'];
+  // AI readiness is its own read: the act/fix verdict and the readiness score, never the maturity average
+  const RST=t=> (t.readiness==='act') ? ['Ready','#1D7044','#E3F4EC']
+              : ((t.readinessScore||0)>=40 ? ['Nearly ready','#B8620A','#FBEEDB'] : ['Foundation-first','#C0392B','#FBE7E4']);
   const STAGES=[
     {name:'Distribution', ids:['mp','db','rd']},
     {name:'Actuarial & Technical', ids:['ap','re','iv']},
@@ -19835,20 +19841,24 @@ function renderValueChain(){
   const maxRows=Math.max(...stageTeams.map(a=>a.length));
   let cells='';
   STAGES.forEach((s,i)=>{ const tm=stageTeams[i].filter(t=>!isOngoing(t)); const da=tm.length?tm.reduce((a,t)=>a+overall(t),0)/tm.length:0;
-    cells+=`<div class="vc-chev${i===0?' first':''}"><span class="vc-chev-nm">${s.name}</span><span class="vc-chev-avg">${da?da.toFixed(1)+' /5 avg':''}</span></div>`; });
+    cells+=`<div class="vc-chev${i===0?' first':''}"><span class="vc-chev-nm">${s.name}</span><span class="vc-chev-avg">${da?da.toFixed(1)+' /5 lean avg':''}</span></div>`; });
   for(let r=0;r<maxRows;r++){ for(let i=0;i<STAGES.length;i++){ const t=stageTeams[i][r];
     if(!t){ cells+='<div class="vc-empty"></div>'; continue; }
     const go="nav('teams');pickTeam('"+t.id+"')";
     if(isOngoing(t)){ cells+=`<div class="vc-card vc-ong" data-team="${t.id}" onclick="${go}" role="button" tabindex="0"><div class="vc-nm">${t.name}</div><div class="vc-ong-b">Assessment ongoing</div></div>`; continue; }
     const ov=overall(t), st=ST(ov), L=lev(t.lever), fte=t.opps.reduce((a,o)=>a+(o.fte[0]+o.fte[1])/2,0);
+    const rs=RST(t), rsc=Math.round(t.readinessScore||0);
     cells+=`<div class="vc-card" data-team="${t.id}" onclick="${go}" role="button" tabindex="0">`
       +`<div class="vc-nm">${t.name}</div>`
-      +`<span class="vc-st" style="background:${st[2]};color:${st[1]}">${st[0]}</span>`
+      +`<span class="vc-st" style="background:${rs[2]};color:${rs[1]}">${rs[0]}</span>`
       +`<div class="vc-row"><span class="vc-sc"><b style="color:${scoreColor(ov)}">${ov.toFixed(1)}</b><span>/5</span></span><span class="vc-pot"><b>${fte.toFixed(1)}</b><span>FTE</span></span></div>`
-      +`<div class="vc-bar"><i style="width:${ov/5*100}%;background:${scoreColor(ov)}"></i></div>`
+      +`<div class="vc-mlbl"><span>Lean maturity</span><span>${ov.toFixed(1)}/5</span></div>`
+      +`<div class="vc-bar lean"><i style="width:${ov/5*100}%;background:${scoreColor(ov)}"></i></div>`
+      +`<div class="vc-mlbl"><span>AI readiness</span><span>${rsc}/100</span></div>`
+      +`<div class="vc-bar rdy"><i style="width:${rsc}%;background:${rsc>=60?'#1D7044':rsc>=40?'#B8620A':'#C0392B'}"></i></div>`
       +`<div class="vc-lead"><span class="vc-leaddot" style="background:${L.dot}"></span><span class="vc-leadlbl">${L.label}</span></div></div>`;
   }}
-  el.innerHTML=`<div class="vc-head"><h2>Value chain view — AI-readiness by stage</h2><p>The 16 teams mapped onto the value chain. <b>Data, digital &amp; AI</b> is the binding constraint on AI readiness (2.8/5 org-wide) — a central data &amp; tech foundation is the No.1 cross-team move to unlock AI and automation. <span class="vc-hint">Hover a team for full detail &middot; click to open its deep-dive.</span></p></div><div class="vc-grid">${cells}</div><div id="vc-tip" class="vc-tip"></div>`;
+  el.innerHTML=`<div class="vc-head"><h2>Value chain view — lean maturity and AI readiness by stage</h2><p>The 16 teams mapped onto the value chain. <b>Data, digital &amp; AI</b> is the lowest-scoring dimension at 2.8/5 org-wide, and it is the one that decides whether AI can run at all — a central data &amp; tech foundation is the No.1 cross-team move. <span class="vc-hint">Hover a team for full detail &middot; click to open its deep-dive.</span></p></div><div class="vc-grid">${cells}</div><div id="vc-tip" class="vc-tip"></div>`;
   vcWireTips(el);
 }
 
@@ -19892,9 +19902,9 @@ function renderSummary(){
       <div class="diag-grp">
         <div class="eyebrow">Diagnostic heatmap</div>
         <div class="card diag-box">
-          <div class="diag-titlerow"><h2 class="diag-h2">AI-readiness by team &amp; division</h2></div>
+          <div class="diag-titlerow"><h2 class="diag-h2">Lean maturity by team &amp; division</h2></div>
           <div class="hm-legend">
-            <span class="hm-cap">Readiness</span>
+            <span class="hm-cap">Lean maturity</span>
             <span class="hm-end">1 · Critical</span>
             <span class="hm-grad"></span>
             <span class="hm-end">5 · Excellent</span>
@@ -19906,7 +19916,7 @@ function renderSummary(){
       <div class="diag-grp">
         <div class="eyebrow">Overall diagnostic</div>
         <div class="card diag-box">
-          <div class="diag-titlerow"><h2 class="diag-h2">AI-readiness assessment</h2>
+          <div class="diag-titlerow"><h2 class="diag-h2">Lean maturity assessment</h2>
             <button class="fchip active" id="diag-reset" onclick="selectSummaryTeam(null)">Company average</button></div>
           <p id="diag-caption" style="font-size:11px;color:var(--muted);margin:0 0 4px;"></p>
           <div class="diag-canvas-wrap"><canvas id="diag-radar"></canvas></div>
@@ -20038,7 +20048,7 @@ function diagSideAvg(){
   return `
     <div class="diag-prio">
       <div class="diag-prio-l">Organisation-level priority</div>
-      <div class="diag-prio-row">${leverChip('data')}<span class="diag-prio-tx"><b>Data, digital &amp; AI</b> is the binding constraint on AI readiness — ${da.data.toFixed(1)}/5 org-wide, the weakest dimension. A central <b>data &amp; tech foundation</b> programme is the No. 1 move: fix it centrally, not team by team, to unblock AI and automation everywhere.</span></div>
+      <div class="diag-prio-row">${leverChip('data')}<span class="diag-prio-tx"><b>Data, digital &amp; AI</b> is the weakest dimension at ${da.data.toFixed(1)}/5 org-wide, and it is the one that decides whether AI can run at all. A central <b>data &amp; tech foundation</b> programme is the No. 1 move: fix it centrally, not team by team, to unblock AI and automation everywhere.</span></div>
     </div>`;
 }
 let oppFilters={ lever:'all', team:'all', nature:'all', readiness:'all', actOnly:false };
@@ -21070,7 +21080,7 @@ function renderTeamContent(){
       <div class="eyebrow">Diagnostic</div>
       <div class="dd6">
         <div class="card span2" style="display:flex;flex-direction:column;height:560px;">
-          <div class="ch"><div class="ct">AI-readiness assessment</div>
+          <div class="ch"><div class="ct">Lean maturity assessment</div>
             <div style="text-align:right;line-height:1;"><span style="font-family:var(--fh);font-size:21px;font-weight:900;">${weightedOverall(t).toFixed(1)}</span><span style="color:var(--muted);font-size:11px;font-weight:600;">/5</span><div style="font-size:8px;color:var(--muted-2);text-transform:uppercase;letter-spacing:.6px;margin-top:2px;">weighted overall</div></div></div>
           <div style="flex:1;position:relative;min-height:340px;"><canvas id="team-radar"></canvas></div>
           <div style="display:flex;justify-content:center;gap:16px;margin-top:8px;font-size:10px;color:var(--muted);">
@@ -21263,7 +21273,7 @@ function renderTeamContent(){
       <div style="font-size:9px;color:var(--muted-2);text-align:center;line-height:1.4;padding:2px 6px 0;">Only the <span style="color:${cGreen};font-weight:700;">identified opportunities</span> are highlighted — grey bars show scope shrinking from ${+totActFte.toFixed(0)} toward ~${+wfEnd.toFixed(0)} FTE if the full potential is captured.</div>
     </div>`;
   const radarCard=`<div class="card span3 ov-clickcard" onclick="setTeamSub('diagnostic')" title="Open the Diagnostic page" style="display:flex;flex-direction:column;height:clamp(300px, calc((100vh - 300px) / 2), 560px);">
-      <div class="ch"><div class="ct">AI-readiness assessment</div><button class="ov-gobtn" onclick="event.stopPropagation();setTeamSub('diagnostic')">Diagnostic →</button></div>
+      <div class="ch"><div class="ct">Lean maturity assessment</div><button class="ov-gobtn" onclick="event.stopPropagation();setTeamSub('diagnostic')">Diagnostic →</button></div>
       <div style="flex:1;position:relative;min-height:0;"><canvas id="ov-radar"></canvas></div>
       ${dimLo?`<div style="font-size:9.5px;color:var(--muted-2);text-align:center;padding:2px 6px 0;">Focus area — <b style="color:var(--text);">${dimLo.l} (${dimLo.v}/5)</b>, the weakest dimension</div>`:''}
     </div>`;
@@ -21884,11 +21894,11 @@ function renderScoring(){
   el.innerHTML=SETUP_BANNER+`
     <div class="setup-grid">
       <div class="card"><div class="ch"><div class="ct">Scoring weights</div><span class="badge-soft" id="weight-mode">Equal weighting</span></div>
-        <p style="font-size:11.5px;color:var(--muted);margin-bottom:14px;">Adjust the weight of each dimension in the overall score. Default is equal (1/6 each); increase Data &amp; Mindset when AI readiness is the primary lens.</p>
+        <p style="font-size:11.5px;color:var(--muted);margin-bottom:14px;">Adjust the weight of each dimension in the lean maturity score. Default is equal (1/6 each); raise Data &amp; Mindset to weight the score toward the dimensions AI depends on. This does not change the AI readiness score, which is assessed separately.</p>
         <div id="weight-sliders"></div>
         <div style="display:flex;gap:8px;margin-top:8px;">
           <button class="fchip" onclick="setWeightPreset('equal')">Reset to equal</button>
-          <button class="fchip" onclick="setWeightPreset('ai')">AI-readiness lens</button>
+          <button class="fchip" onclick="setWeightPreset('ai')">AI-relevance weighting</button>
         </div>
       </div>
 
@@ -21962,7 +21972,7 @@ function setWeightPreset(p){
   if(p==='equal') WEIGHTS={proc:1,cust:1,mgmt:1,data:1,mind:1,org:1};
   else WEIGHTS={proc:1,cust:0.5,mgmt:1,data:2,mind:2,org:1};
   renderWeightSliders();
-  $('#weight-mode').textContent = p==='equal'?'Equal weighting':'AI-readiness lens';
+  $('#weight-mode').textContent = p==='equal'?'Equal weighting':'AI-relevance weighting';
 }
 
 /* ===================== AI OPPORTUNITY HEATMAP ===================== */
