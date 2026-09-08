@@ -519,6 +519,44 @@ html.dark .nat-R{background:#1E2C45;} html.dark .nat-K{background:#2A2440;}
 .act-table td, .act-table th { font-size:12px; }
 .tag-r { font-size:9px; font-weight:700; padding:2px 6px; border-radius:5px; background:var(--surface-2); color:var(--muted); }
 
+/* ===== AI readiness tab ===== */
+.rdy-chip { font-size:9.5px; font-weight:800; text-transform:uppercase; letter-spacing:.7px; padding:3px 9px; border-radius:20px; display:inline-block; }
+.rdy-score { font-family:var(--fh); font-size:46px; font-weight:900; line-height:1; }
+.rdy-score small { font-size:15px; font-weight:700; color:var(--muted); margin-left:2px; }
+.rdy-track { position:relative; height:9px; border-radius:5px; background:var(--surface-2); overflow:hidden; margin:12px 0 6px; }
+.rdy-track i { position:absolute; left:0; top:0; bottom:0; border-radius:5px; }
+.rdy-ticks { display:flex; justify-content:space-between; font-size:8.5px; color:var(--muted-2); font-weight:700; text-transform:uppercase; letter-spacing:.6px; }
+.rdy-note { font-size:11px; color:var(--muted); line-height:1.55; }
+.rdy-bind { margin-top:13px; padding:11px 13px; border-radius:9px; background:var(--surface-2); border-left:3px solid var(--amber); }
+.rdy-bind-l { font-size:8.5px; font-weight:800; text-transform:uppercase; letter-spacing:.9px; color:var(--muted-2); }
+.rdy-bind-t { font-family:var(--fh); font-size:13px; font-weight:800; margin-top:3px; }
+.rdy-bind-w { font-size:10.5px; color:var(--muted); line-height:1.5; margin-top:5px; }
+.rdy-rule { margin-top:auto; padding-top:12px; font-size:10.5px; color:var(--muted); line-height:1.5; border-top:1px solid var(--divider); }
+.rdy-gate { display:grid; grid-template-columns:150px 1fr; gap:14px; padding:13px 0; border-top:1px solid var(--divider); }
+.rdy-gate:first-of-type { border-top:none; padding-top:4px; }
+.rdy-gate-q { font-family:var(--fh); font-size:12.5px; font-weight:800; line-height:1.35; }
+.rdy-gate-role { font-size:8.5px; font-weight:800; text-transform:uppercase; letter-spacing:.8px; color:var(--muted-2); margin-top:4px; }
+.rdy-gate-dims { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:6px; align-items:center; }
+.rdy-dpill { display:inline-flex; align-items:center; gap:5px; font-size:10px; font-weight:700; color:var(--muted); background:var(--surface-2); border-radius:6px; padding:2px 7px 2px 5px; }
+.rdy-dpill b { font-family:var(--fh); font-size:10.5px; font-weight:900; border-radius:4px; padding:1px 5px; }
+.rdy-gate-t { font-size:11px; color:var(--muted); line-height:1.55; }
+.rdy-gate-ev { font-size:10.5px; color:var(--muted-2); line-height:1.5; margin-top:5px; font-style:italic; }
+.rdy-aim { margin-top:12px; padding:10px 12px; border-radius:9px; background:var(--surface-2); font-size:10.5px; color:var(--muted); line-height:1.55; }
+.rdy-lev { display:flex; align-items:center; gap:9px; padding:8px 0; border-top:1px solid var(--divider); }
+.rdy-lev:first-of-type { border-top:none; }
+.rdy-lev-st { margin-left:auto; font-size:9.5px; font-weight:800; text-transform:uppercase; letter-spacing:.5px; white-space:nowrap; }
+.rdy-lev-b { font-size:10px; color:var(--muted-2); white-space:nowrap; }
+.rdy-famlbl { font-size:8.5px; font-weight:800; text-transform:uppercase; letter-spacing:.9px; color:var(--muted-2); margin:11px 0 2px; }
+.rdy-famlbl:first-child { margin-top:0; }
+.rdy-step { display:flex; gap:11px; padding:10px 0; border-top:1px solid var(--divider); }
+.rdy-step:first-of-type { border-top:none; padding-top:2px; }
+.rdy-step-n { width:20px; height:20px; border-radius:6px; background:var(--navy); color:#fff; font-family:var(--fh); font-size:10.5px; font-weight:900; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+.rdy-step-t { font-size:11.5px; font-weight:700; line-height:1.4; }
+.rdy-step-s { font-size:10.5px; color:var(--muted); line-height:1.5; margin-top:3px; }
+.rdy-gopp { display:flex; align-items:center; gap:8px; font-size:10.5px; color:var(--muted); padding:5px 0; border-top:1px dashed var(--divider); }
+.rdy-gopp b { color:var(--text); font-weight:700; }
+.rdy-gopp span.f { margin-left:auto; font-family:var(--fh); font-weight:800; color:var(--text); white-space:nowrap; }
+
 /* ===== analyses inventory (artifact cards) ===== */
 .artf-head { font-size:12px; color:var(--muted); margin-bottom:12px; line-height:1.5; }
 .artf-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; }
@@ -19865,12 +19903,58 @@ function vcWireTips(el){
   grid.addEventListener('mouseout',e=>{ const c=e.target.closest('.vc-card'); const to=e.relatedTarget; if(c&&(!to||!c.contains(to))) tip.style.display='none'; });
 }
 
+// ===== AI READINESS — ONE derivation, shared by the value chain and the team AI-readiness tab =====
+// Readiness is a weakest-link read on the same five dimensions the lean maturity scan uses; it answers a
+// different question ("can this team put AI to work?") and it picks the LEVER — the improvement potential
+// sizes it. A readiness score never produces an FTE figure.
+function aiReadinessVerdict(t){
+  const s=Math.round(t.readinessScore||0);
+  if(t.readiness==='act')  return { tier:'act',   label:'Ready',           color:'#1D7044', bg:'#E3F4EC', score:s };
+  if(t.readiness==='deprio') return { tier:'dep', label:'Deprioritise',    color:'#C0392B', bg:'#FBE7E4', score:s };
+  return s>=40 ? { tier:'near',  label:'Nearly ready',     color:'#B8620A', bg:'#FBEEDB', score:s }
+               : { tier:'found', label:'Foundation-first', color:'#C0392B', bg:'#FBE7E4', score:s };
+}
+// The three gates. Same dimensions as the lean maturity scan — a different bar, and a different question.
+const RDY_GATES=[
+  { key:'run',   dims:['data'],        role:'Hard gate',  q:'Can AI run at all?',
+    yes:'Data is available, joined and trustworthy enough for a model to act on.',
+    no:'Automation and predictive AI are not deployable here yet — the data foundation comes first, whatever the appetite.' },
+  { key:'land',  dims:['org','mgmt'],  role:'Value gate', q:'Does the saving land?',
+    yes:'Roles, KPIs and capacity management are clear enough to turn freed hours into capacity.',
+    no:'Hours freed by AI get reabsorbed — the benefit never shows up where it can be counted.' },
+  { key:'scale', dims:['proc','mind'], role:'Scale gate', q:'Does a pilot scale?',
+    yes:'Processes are standard enough, and the team open enough, to move past a single pilot.',
+    no:'A pilot may well work; it will not spread beyond the people who built it.' },
+];
+const RDY_RELEASE={
+  run:  'Unblocks every technology lever — automation and both AI levers sit behind this one.',
+  land: 'Turns the freed hours into capacity the business can actually redeploy.',
+  scale:'Lets a working pilot spread beyond the team that built it.',
+};
+function rdyGateStatus(v){
+  return v>=4 ? { k:'clear',   label:'Clear',    color:'#1D7044', bg:'#E3F4EC' }
+       : v>=3 ? { k:'partial', label:'Partial',  color:'#B8620A', bg:'#FBEEDB' }
+              : { k:'block',   label:'Blocking', color:'#C0392B', bg:'#FBE7E4' };
+}
+function readinessGates(t){
+  const dl=k=>((DIMS.find(d=>d.key===k)||{}).label||k);
+  return RDY_GATES.map(g=>{
+    const dims=g.dims.map(k=>({ key:k, label:dl(k), v:t.scores[k], why:(t.rationale||{})[k]||'' }));
+    const low=dims.reduce((a,b)=>b.v<a.v?b:a);
+    return { ...g, dims, low, st:rdyGateStatus(low.v) };
+  });
+}
+function readinessBinding(t){
+  const gs=readinessGates(t);
+  return [...gs].sort((a,b)=>a.low.v-b.low.v || RDY_GATES.findIndex(x=>x.key===a.key)-RDY_GATES.findIndex(x=>x.key===b.key))[0];
+}
+
 function renderValueChain(){
   const el=document.getElementById('page-valuechain');
   const ST=ov=> ov>=3.3?['Ready','#1D7044','#E3F4EC']: ov>=2.8?['Developing','#B8620A','#FBEEDB']:['Foundation','#C0392B','#FBE7E4'];
-  // AI readiness is its own read: the act/fix verdict and the readiness score, never the maturity average
-  const RST=t=> (t.readiness==='act') ? ['Ready','#1D7044','#E3F4EC']
-              : ((t.readinessScore||0)>=40 ? ['Nearly ready','#B8620A','#FBEEDB'] : ['Foundation-first','#C0392B','#FBE7E4']);
+  // AI readiness is its own read: the act/fix verdict and the readiness score, never the maturity average.
+  // Single shared derivation — see aiReadinessVerdict() above, also used by the team AI-readiness tab.
+  const RST=t=>{ const v=aiReadinessVerdict(t); return [v.label,v.color,v.bg]; };
   const STAGES=[
     {name:'Distribution', ids:['mp','db','rd']},
     {name:'Actuarial & Technical', ids:['ap','re','iv']},
@@ -21111,7 +21195,7 @@ function renderTeamContent(){
         ${tile('FTE in scope',t.fte,'team headcount',ic.fte)}
         ${tile('Activities mapped',t.activities.length,'in baseline',ic.act)}
         ${tile('Weighted score',weightedOverall(t).toFixed(1),'of 5',ic.score)}
-        ${tile('Readiness',t.readinessScore+'%','data + mindset gate',ic.ready)}
+        ${tile('AI readiness',t.readinessScore+'%','weakest gate, not an average',ic.ready)}
         ${tile('Improvement potential',t.potential+'%','assessed',ic.pot,true)}
         <div class="kpi-box pot-box"><div><div class="kpi-eyebrow">FTE impact</div><div class="kpi-v" id="kpi-optfte">~${totalOpt.toFixed(1)}</div><div class="kpi-sub">optimisable · editable in baseline</div></div><div class="kpi-icon">${ic.impact}</div></div>
       </div>
@@ -21259,7 +21343,7 @@ function renderTeamContent(){
   ]);
   const kpiDiag=kpiStrip([
     tile('Weighted score',weightedOverall(t).toFixed(1),'of 5',ic.score),
-    tile('Readiness',t.readinessScore+'%','data + mindset gate',ic.ready),
+    tile('AI readiness',t.readinessScore+'%','separate read — see AI readiness',ic.ready),
     tile('Improvement potential',t.potential+'%','assessed',ic.pot,true),
     tile('Focus areas',lowDims,'scoring ≤ 2 of 5',warnIc),
   ]);
@@ -21329,7 +21413,7 @@ function renderTeamContent(){
       </div>
     </div>`;
   const ovGrid=`<div class="dd-section"><div class="dd6">${waterfallCard}${keyPrioCard}${workloadCard}${radarCard}</div></div>`;
-  const pages={ overview:ovGrid, baseline:kpiBaseline+secBaseline, diagnostic:kpiDiag+secDiag, analyses:analysesPage(t), opportunities:kpiOpp+secOpp, roadmap:teamRoadmapHTML(t) };
+  const pages={ overview:ovGrid, baseline:kpiBaseline+secBaseline, diagnostic:kpiDiag+secDiag, readiness:readinessPage(t), analyses:analysesPage(t), opportunities:kpiOpp+secOpp, roadmap:teamRoadmapHTML(t) };
   c.innerHTML = secVerdict + subnav + `<div id="team-sub-content">${pages[teamSub]||pages.overview}</div>`;
 
   if(teamSub==='overview'){
@@ -21357,11 +21441,120 @@ function renderTeamContent(){
 const TEAM_SUBS=[
   { key:'overview',      label:'Overview' },
   { key:'baseline',      label:'Baseline' },
-  { key:'diagnostic',    label:'Diagnostic' },
+  { key:'diagnostic',    label:'Lean maturity' },
+  { key:'readiness',     label:'AI readiness' },
   { key:'analyses',      label:'Analyses' },
   { key:'opportunities', label:'Opportunities' },
   { key:'roadmap',       label:'Transfo roadmap' },
 ];
+// ===================== TEAM · AI READINESS TAB =====================
+// The lean maturity tab answers "how well does this team run today?". This one answers
+// "can this team put AI to work, and if not, what is in the way?" — same five dimensions,
+// different bar, read as a weakest link. It picks the lever; the potential sizes it.
+function readinessPage(t){
+  const V=aiReadinessVerdict(t), gates=readinessGates(t), bind=readinessBinding(t);
+  const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const dl=k=>((DIMS.find(d=>d.key===k)||{}).label||k);
+  const cleared=gates.filter(g=>g.st.k==='clear').length;
+  const opps=t.opps||[];
+  const gated=opps.filter(o=>readinessModel(o,t).verdict!=='act');
+  const gatedFte=gated.reduce((a,o)=>a+(o.fte[0]+o.fte[1])/2,0);
+  const rIc='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>';
+  const lIc='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M7 11V7a5 5 0 0 1 10 0"/><rect x="4" y="11" width="16" height="10" rx="2"/></svg>';
+  const gIc='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>';
+  const wIc='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M12 3 2 20h20z"/><path d="M12 10v5M12 18h.01"/></svg>';
+  const box=(label,v,sub,icon)=>`<div class="kpi-box"><div><div class="kpi-eyebrow">${label}</div><div class="kpi-v">${v}</div><div class="kpi-sub">${sub}</div></div><div class="kpi-icon">${icon}</div></div>`;
+  const kpi=`<div class="kpi-boxes" style="grid-template-columns:repeat(4,1fr);margin-bottom:18px;">
+      ${box('AI readiness',V.score+'%',V.label.toLowerCase()+' · weakest gate',rIc)}
+      ${box('Gates cleared',cleared+' of 3','run · land · scale',gIc)}
+      ${box(cleared===3?'Weakest gate':'Binding constraint',bind.low.v+'/5',esc(bind.low.label)+' — '+esc(bind.role.toLowerCase()),lIc)}
+      ${box('Gated opportunities',gated.length,gated.length?'~'+gatedFte.toFixed(1)+' FTE waiting on the gate':'nothing waiting on readiness',wIc)}
+    </div>`;
+
+  // --- hero: the score, what it is, and the one thing holding it
+  const hero=`<div class="card span2" style="display:flex;flex-direction:column;">
+      <div class="ch"><div class="ct">AI readiness verdict</div><span class="rdy-chip" style="background:${V.bg};color:${V.color};">${V.label}</span></div>
+      <div style="display:flex;align-items:flex-end;gap:10px;margin-top:6px;"><span class="rdy-score" style="color:${V.color};">${V.score}<small>/100</small></span></div>
+      <div class="rdy-track"><i style="width:${Math.max(2,Math.min(100,V.score))}%;background:${V.color};"></i></div>
+      <div class="rdy-ticks"><span>Foundation-first</span><span>Nearly ready</span><span>Ready</span></div>
+      <div class="rdy-note" style="margin-top:11px;">Read as a <b style="color:var(--text);">weakest link, not an average</b>. The same five dimensions as the lean maturity scan, held to a different bar: not "how well does this team run today?" but "can it put AI to work?".</div>
+      <div class="rdy-bind" style="border-left-color:${bind.st.color};">
+        <div class="rdy-bind-l">${cleared===3?'Weakest gate':'Binding constraint'}</div>
+        <div class="rdy-bind-t">${esc(bind.low.label)} — ${bind.low.v}/5</div>
+        <div class="rdy-bind-w">${esc(bind.q)} ${bind.st.k==='clear'?esc(bind.yes):esc(bind.no)}</div>
+      </div>
+      <div class="rdy-rule">Readiness picks the <b style="color:var(--text);">lever</b>. The improvement potential <b style="color:var(--text);">sizes</b> it. A readiness score never produces an FTE figure on its own.</div>
+    </div>`;
+
+  // --- the three gates
+  const gateRow=g=>`<div class="rdy-gate">
+      <div><div class="rdy-gate-q">${esc(g.q)}</div><div class="rdy-gate-role">${esc(g.role)}</div>
+        <span class="rdy-chip" style="background:${g.st.bg};color:${g.st.color};margin-top:7px;">${g.st.label}</span></div>
+      <div>
+        <div class="rdy-gate-dims">${g.dims.map(d=>`<span class="rdy-dpill"><b style="background:${scoreColor(d.v)};color:${scoreText(d.v)};">${d.v}</b>${esc(d.label)}</span>`).join('')}</div>
+        <div class="rdy-gate-t">${g.st.k==='clear'?esc(g.yes):esc(g.no)}</div>
+        ${g.low.why?`<div class="rdy-gate-ev">${esc(g.low.label)} — ${esc(g.low.why)}</div>`:''}
+      </div>
+    </div>`;
+  const cu=t.scores.cust;
+  const gatesCard=`<div class="card span4" style="display:flex;flex-direction:column;">
+      <div class="ch"><div class="ct">The three gates</div><span style="font-size:10px;color:var(--muted);">a gate is cleared at 4/5, partial at 3, blocking at 2 or below</span></div>
+      <div style="margin-top:4px;">${gates.map(gateRow).join('')}</div>
+      <div class="rdy-aim"><b style="color:var(--text);">${esc(dl('cust'))} (${cu}/5) is not a gate</b> — it aims the work. It decides which problems are worth solving first, not whether AI can be put to work at all.</div>
+    </div>`;
+
+  // --- lever availability, straight off the same gate model the opportunity list uses
+  const famOf=[{lbl:'Operating levers — never gated, and they carry potential of their own',keys:['process','lean','org']},
+               {lbl:'Technology levers — gated on readiness',keys:['auto','aiacc','aienh']}];
+  // "Assist only" is not a fourth model — it is the one place the opportunity gate is deliberately looser:
+  // human-in-the-loop enhancement clears at Data 2, where automation and predictive AI need Data 3.
+  const levRow=k=>{ const L=lev(k), m=readinessModel({lever:k},t), ok=m.verdict==='act';
+    const limited=ok && k==='aienh' && t.scores.data<3;
+    const st=limited?['Assist only','#B8620A']:ok?['Available now','#1D7044']:['Gated','#C0392B'];
+    return `<div class="rdy-lev"><span style="width:9px;height:9px;border-radius:3px;background:${L.dot};display:inline-block;flex-shrink:0;"></span>
+      <span style="font-size:11.5px;font-weight:700;">${esc(L.label)}</span>
+      ${m.basis?`<span class="rdy-lev-b">${esc(m.basis)}</span>`:''}
+      <span class="rdy-lev-st" style="color:${st[1]};">${st[0]}</span></div>`; };
+  const anyLimited=['aienh'].some(k=>readinessModel({lever:k},t).verdict==='act' && t.scores.data<3);
+  const leverCard=`<div class="card span3" style="display:flex;flex-direction:column;">
+      <div class="ch"><div class="ct">What readiness opens — and what it holds back</div></div>
+      ${famOf.map(f=>`<div class="rdy-famlbl">${esc(f.lbl)}</div>${f.keys.map(levRow).join('')}`).join('')}
+      ${anyLimited?`<div class="rdy-note" style="margin-top:11px;padding:9px 11px;border-radius:8px;background:var(--surface-2);"><b style="color:var(--text);">Assist only</b> — a human stays in the loop, so enhancement can start on thinner data than automation or predictive AI need. It will not scale past assist-level use until the data gate clears.</div>`:''}
+      <div class="rdy-note" style="margin-top:12px;padding-top:11px;border-top:1px solid var(--divider);">Only the <b style="color:var(--text);">data &amp; tech foundation</b> is a pure enabler. Every other lever carries improvement potential in its own right — which is why a team that is not AI-ready still has work worth doing today.</div>
+    </div>`;
+
+  // --- unlock path
+  const open=gates.filter(g=>g.st.k!=='clear').sort((a,b)=>a.low.v-b.low.v);
+  const steps=open.map((g,i)=>{ const tgt=g.low.v>=3?4:3;
+    return `<div class="rdy-step"><div class="rdy-step-n">${i+1}</div><div>
+        <div class="rdy-step-t">Lift ${esc(g.low.label)} from ${g.low.v}/5 to ${tgt}/5</div>
+        <div class="rdy-step-s">${esc(RDY_RELEASE[g.key])}</div></div></div>`; }).join('');
+  const gatedList=gated.length
+    ? `<div style="margin-top:13px;padding-top:11px;border-top:1px solid var(--divider);">
+         <div class="rdy-famlbl" style="margin-top:0;">Held behind the gate — ~${gatedFte.toFixed(1)} FTE</div>
+         ${gated.map(o=>`<div class="rdy-gopp"><b>${esc(o.activity||o.name||'Opportunity')}</b>${leverChip(o.lever)}<span class="f">${fmtFte(o.fte)} FTE</span></div>`).join('')}
+       </div>`
+    : '';
+  const ready=opps.filter(o=>readinessModel(o,t).verdict==='act');
+  const readyFte=ready.reduce((a,o)=>a+(o.fte[0]+o.fte[1])/2,0);
+  const readyList=ready.length
+    ? `<div class="rdy-famlbl">Already runnable — ~${readyFte.toFixed(1)} FTE</div>
+       ${ready.map(o=>`<div class="rdy-gopp"><b>${esc(o.activity||o.name||'Opportunity')}</b>${leverChip(o.lever)}<span class="f">${fmtFte(o.fte)} FTE</span></div>`).join('')}`
+    : '';
+  const clearBody=`<div class="rdy-note" style="padding:4px 0 2px;">All three gates are clear. Nothing here waits on readiness — the constraint is delivery capacity and sequencing, not whether the team can put AI to work.</div>
+      ${readyList}
+      <div class="rdy-note" style="margin-top:auto;padding-top:12px;border-top:1px solid var(--divider);">A team in this position is where a pilot should start: the result lands, it survives contact with the operating model, and it can be shown to the rest of the organisation.</div>`;
+  const unlockCard=`<div class="card span3" style="display:flex;flex-direction:column;">
+      <div class="ch"><div class="ct">Unlock path</div><button class="ov-gobtn" onclick="setTeamSub('opportunities')">Opportunities →</button></div>
+      ${open.length ? steps+gatedList+`<div class="rdy-note" style="margin-top:auto;padding-top:12px;border-top:1px solid var(--divider);">These are not AI projects. They are the operating-basics work that both delivers potential on its own and buys the right to run the technology levers afterwards.</div>` : clearBody}
+    </div>`;
+
+  return `<div class="dd-section">
+      <div class="eyebrow">AI readiness</div>
+      ${kpi}
+      <div class="dd6">${hero}${gatesCard}${leverCard}${unlockCard}</div>
+    </div>`;
+}
 function setTeamSub(k){ teamSub=k; renderTeamContent();
   const sc=document.querySelector('.tdd-bar'); if(sc) sc.scrollIntoView({block:'nearest'});
 }
