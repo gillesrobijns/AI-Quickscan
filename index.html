@@ -603,6 +603,19 @@ html.dark .nat-R{background:#1E2C45;} html.dark .nat-K{background:#2A2440;}
 .rdd-sub .tk i { position:absolute; left:0; top:0; bottom:0; border-radius:3px; }
 .rdd-sub .tk u { position:absolute; top:-3px; bottom:-3px; width:0; border-left:1.5px dashed var(--navy); }
 .rdd-sub .v { text-align:right; font-family:var(--fh); font-weight:900; font-size:12px; }
+
+.lv-tbl { width:100%; font-size:11.5px; height:100%; }
+.lv-tbl th { font-size:8.5px; letter-spacing:.6px; }
+.lv-tbl tbody tr:not(.tot) { height:1px; }
+.lv-tbl .lv-g td { padding-top:15px; padding-bottom:7px; border-top:1px solid var(--divider); }
+.lv-tbl .lv-g:first-child td { border-top:none; padding-top:2px; }
+.lv-gn { font-family:var(--fh); font-weight:800; font-size:11.5px; margin-left:7px; }
+.lv-gs { display:block; font-size:9.5px; color:var(--muted-2); margin-left:26px; margin-top:1px; font-weight:600; }
+.lv-o td { padding:9px 0; }
+.lv-nm { padding-left:26px !important; color:var(--muted); }
+.lv-wh { font-size:10px; color:var(--muted-2); white-space:nowrap; font-weight:650; }
+.lv-dot { display:inline-block; width:6px; height:6px; border-radius:50%; margin-right:5px; vertical-align:middle; }
+.lv-f { text-align:right; font-family:var(--fh); font-weight:800; font-size:11.5px; white-space:nowrap; }
 .rdd-ins { font-size:11.5px; line-height:1.62; color:var(--muted); }
 .rdd-why { font-size:11.5px; color:var(--muted); line-height:1.6; padding:11px 13px; background:var(--surface-2); border-radius:8px; margin-top:12px; border-left:3px solid var(--green-soft); }
 .rdd-why b { color:var(--text); font-weight:700; }
@@ -21588,7 +21601,7 @@ function valueWaterfall(t, opt){
 function potentialPage(t){
   const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   const mid=o=>(o.fte[0]+o.fte[1])/2;
-  const W=valueWaterfall(t,{w:1200,h:415,pt:56,pb:58,bar:132,fs:1.3});
+  const W=valueWaterfall(t,{w:1200,h:492,pt:62,pb:74,bar:140,fs:1.5});
   const opps=(t.opps||[]).slice().sort((a,b)=>mid(b)-mid(a));
   const gMax=Math.max(0.1,...W.grps.map(g=>g.fte));
 
@@ -21607,40 +21620,52 @@ function potentialPage(t){
       ${tile('After the enablers',W.laterFte.toFixed(1),'FTE · waiting on the foundation',ic.act)}
     </div>`;
 
-  const wfCard=`<div class="card span6" style="display:flex;flex-direction:column;height:480px;">
+  const H=430;
+  const wfCard=`<div class="card span4" style="display:flex;flex-direction:column;height:${H}px;">
       <div class="ch"><div class="ct">From total scope to full potential</div>
         <span style="font-size:10px;color:var(--muted);">hover a bar for the detail behind it</span></div>
       <div style="flex:1;position:relative;min-height:0;display:flex;align-items:stretch;justify-content:center;">${W.svg}</div>
     </div>`;
 
-  // levers and the initiatives behind them — one table, grouped; the legend was just the roll-up
-  const byGrp=W.grps.map((g,i)=>({ ...g, no:i+1, list:opps.filter(o=>ttOf(o)===g.k).sort((a,b)=>mid(b)-mid(a)) }));
-  const oppRow=o=>{ const h=deriveHorizon(o,t), m=readinessModel(o,t), ok=m.verdict==='act';
-    return `<tr><td class="a" style="padding-left:30px;">${esc(o.activity||o.name||'Opportunity')}</td>
-        <td>${leverChip(o.lever)}</td>
-        <td><span class="nature nat-${o.nature}" title="${(typeof NAT_LONG!=='undefined'&&NAT_LONG[o.nature])||''}">${o.nature}</span></td>
-        <td><span class="pot-hz"><b>${h.key}</b>${(typeof HORIZON_LABEL!=='undefined'&&HORIZON_LABEL[h.key])||''}</span></td>
-        <td><span class="pot-vd" style="color:${ok?'#1D7044':'#C0392B'}">${ok?'Act now':'Fix readiness first'}</span></td>
-        <td class="f r">${fmtFte(o.fte)}</td></tr>`; };
-  const grpRow=g=>`<tr class="grp"><td colspan="5">
-        <span class="gno" style="background:${g.dot}">${g.no}</span><span class="gnm">${esc(g.label)}</span>
-        <span class="gsub">${g.n} initiative${g.n===1?'':'s'} · ${Math.round(g.fte/Math.max(0.1,W.oppSum)*100)}% of what is identified</span>
-      </td><td class="f r" style="color:${g.dot};">~${g.fte.toFixed(1)} FTE</td></tr>`;
-  const mergedCard=`<div class="card span6" style="display:flex;flex-direction:column;">
-      <div class="ch"><div class="ct">Improvement levers, and the initiatives behind them</div>
-        <button class="ov-gobtn" onclick="setTeamSub('opportunities')">Opportunity detail →</button></div>
-      <table class="pot-tbl" style="margin-top:4px;">
-        <thead><tr><th>Lever &amp; initiative</th><th>Type</th><th>Work nature</th><th>Horizon</th><th>Readiness</th><th class="r">FTE impact</th></tr></thead>
+  // the levers rail — grouped by lever, one line per initiative. The dot is the waterfall's own
+  // green/amber, so a row reads back to the bar it sits in. Full detail is on the Opportunities tab.
+  // Largest-remainder rounding, so what is printed adds up: the lever figures sum to the printed
+  // total and the shares sum to 100. Rounding each one on its own drifts by a tenth and shows.
+  const share=(vals,total)=>{
+    const base=vals.map(v=>Math.floor(v*total/Math.max(1e-9,vals.reduce((a,c)=>a+c,0))));
+    const exact=vals.map(v=>v*total/Math.max(1e-9,vals.reduce((a,c)=>a+c,0)));
+    let rem=total-base.reduce((a,c)=>a+c,0);
+    exact.map((v,i)=>[v-base[i],i]).sort((a,b)=>b[0]-a[0]).forEach(([,i])=>{ if(rem>0){ base[i]++; rem--; } });
+    return base;
+  };
+  const gTenths=share(W.grps.map(g=>g.fte), Math.round(W.oppSum*10));
+  const gPct=share(W.grps.map(g=>g.fte), 100);
+  const byGrp=W.grps.map((g,i)=>({ ...g, no:i+1, shown:gTenths[i]/10, pct:gPct[i],
+    list:opps.filter(o=>ttOf(o)===g.k).sort((a,b)=>mid(b)-mid(a)) }));
+  const oppRow=o=>{ const ok=readinessModel(o,t).verdict==='act';
+    return `<tr class="lv-o"><td class="lv-nm">${esc(o.activity||o.name||'Opportunity')}</td>
+        <td class="lv-wh"><span class="lv-dot" style="background:${ok?'#006843':'#B8620A'}"></span>${ok?'now':'later'}</td>
+        <td class="lv-f">${fmtFte(o.fte)}</td></tr>`; };
+  const grpRow=g=>`<tr class="lv-g"><td colspan="2">
+        <span class="gno" style="background:${g.dot}">${g.no}</span><span class="lv-gn">${esc(g.label)}</span>
+        <span class="lv-gs">${g.n} initiative${g.n===1?'':'s'} · ${g.pct}%</span>
+      </td><td class="lv-f" style="color:${g.dot};">~${g.shown.toFixed(1)}</td></tr>`;
+  const lvCard=`<div class="card span2" style="display:flex;flex-direction:column;height:${H}px;">
+      <div class="ch"><div class="ct">Improvement levers</div>
+        <button class="ov-gobtn" onclick="setTeamSub('opportunities')">Detail →</button></div>
+      <div style="flex:1;overflow-y:auto;min-height:0;">
+      <table class="pot-tbl lv-tbl">
+        <thead><tr><th>Lever &amp; initiative</th><th>When</th><th class="r">FTE</th></tr></thead>
         <tbody>
-        ${byGrp.length?byGrp.map(g=>grpRow(g)+g.list.map(oppRow).join('')).join(''):'<tr><td colspan="6" class="rdy-none">No opportunities scoped yet.</td></tr>'}
-        <tr class="tot"><td class="a">Identified, bottom-up</td><td colspan="4" style="color:var(--muted);font-size:11px;">&Sigma; of the scoped initiatives · cross-checked against the ~${W.totalOpt.toFixed(1)} FTE top-down potential</td>
-          <td class="f r" style="color:var(--green);">~${W.oppSum.toFixed(1)} FTE</td></tr>
+        ${byGrp.length?byGrp.map(g=>grpRow(g)+g.list.map(oppRow).join('')).join(''):'<tr><td colspan="3" class="rdy-none">No opportunities scoped yet.</td></tr>'}
+        <tr class="tot"><td class="a">Identified, bottom-up</td><td></td>
+          <td class="lv-f" style="color:var(--green);">~${(Math.round(W.oppSum*10)/10).toFixed(1)}</td></tr>
         </tbody>
-      </table>
+      </table></div>
     </div>`;
 
   return `<div class="dd-section"><div class="eyebrow">Improvement potential</div>
-      ${kpi}<div class="dd6">${wfCard}${mergedCard}</div></div>`;
+      ${kpi}<div class="dd6">${wfCard}${lvCard}</div></div>`;
 }
 // ===================== TEAM · AI READINESS TAB =====================
 // The lean maturity tab answers "how well does this team run today?". This one answers
