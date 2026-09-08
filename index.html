@@ -617,6 +617,12 @@ html.dark .nat-R{background:#1E2C45;} html.dark .nat-K{background:#2A2440;}
 .pot-tbl td.a { font-weight:650; }
 .pot-tbl td.f { font-family:var(--fh); font-weight:900; font-size:12.5px; white-space:nowrap; }
 .pot-tbl tr.tot td { border-top:2px solid var(--navy); border-bottom:none; padding-top:11px; font-weight:800; }
+.pot-tbl tr.grp td { background:var(--surface-2); padding-top:10px; padding-bottom:10px; }
+.pot-tbl tr.grp td:first-child { padding-left:12px; border-radius:6px 0 0 6px; }
+.pot-tbl tr.grp td:last-child { border-radius:0 6px 6px 0; padding-right:12px; }
+.pot-tbl .gno { display:inline-flex; align-items:center; justify-content:center; width:17px; height:17px; border-radius:5px; color:#fff; font-family:var(--fh); font-size:10px; font-weight:900; margin-right:9px; vertical-align:middle; }
+.pot-tbl .gnm { font-size:12px; font-weight:800; vertical-align:middle; }
+.pot-tbl .gsub { font-size:10.5px; color:var(--muted-2); font-weight:650; margin-left:10px; vertical-align:middle; }
 .pot-hz { font-size:10px; font-weight:700; color:var(--muted); white-space:nowrap; }
 .pot-hz b { display:block; font-size:8.5px; font-weight:800; letter-spacing:.6px; text-transform:uppercase; color:var(--muted-2); }
 .pot-vd { font-size:9.5px; font-weight:800; letter-spacing:.4px; text-transform:uppercase; white-space:nowrap; }
@@ -21262,10 +21268,6 @@ function renderTeamContent(){
   const tile=(label,v,sub,icon,pot)=>`<div class="kpi-box${pot?' pot-box':''}"><div><div class="kpi-eyebrow">${label}</div>
     <div class="kpi-v">${v}</div><div class="kpi-sub">${sub}</div></div><div class="kpi-icon">${icon}</div></div>`;
 
-  const secVerdict=`
-    <div class="dd-verdict" style="border-left:3px solid ${lev(t.lever).t};">
-      <span class="dd-verdict-l">Verdict</span><span class="dd-verdict-t">${t.finding}</span>
-    </div>`;
   const secDiag=`
     <!-- SECTION 2 · LEAN MATURITY -->
     <div class="dd-section">
@@ -21441,7 +21443,7 @@ function renderTeamContent(){
     </div>`;
   const ovGrid=`<div class="dd-section"><div class="dd6">${waterfallCard}${keyPrioCard}${workloadCard}${radarCard}</div></div>`;
   const pages={ overview:ovGrid, baseline:kpiBaseline+secBaseline, diagnostic:kpiDiag+secDiag, potential:potentialPage(t), readiness:readinessPage(t), analyses:analysesPage(t), opportunities:kpiOpp+secOpp, roadmap:teamRoadmapHTML(t) };
-  c.innerHTML = (teamSub==='potential'?'':secVerdict) + subnav + `<div id="team-sub-content">${pages[teamSub]||pages.overview}</div>`;
+  c.innerHTML = subnav + `<div id="team-sub-content">${pages[teamSub]||pages.overview}</div>`;
 
   if(teamSub==='overview'){
     const txt=cssVar('--muted'), grid=cssVar('--divider');
@@ -21455,14 +21457,10 @@ function renderTeamContent(){
         plugins:{ legend:{display:false}, tooltip:{ callbacks:{ title:items=>{ const l=items[0]?.label; return Array.isArray(l)?l.join(' '):l; }, label:c=>' '+c.parsed.y+' FTE' } } },
         scales:{ x:{ grid:{display:false}, ticks:{color:txt, font:{size:8.5}, maxRotation:0, minRotation:0, autoSkip:false } }, y:{ grid:{color:grid}, ticks:{color:txt, font:{size:10}}, beginAtZero:true } } } });
     // waterfall tooltips — compact, structured (title · value · sub) in the shared tooltip
-    document.querySelectorAll('#team-sub-content [data-tip]').forEach(el=>{
-      const html=`<div class="tip-h"><b>${el.dataset.tip}</b>${el.dataset.tipv?`<span>${el.dataset.tipv}</span>`:''}</div>`+(el.dataset.tips?`<div class="tip-sub" style="margin:2px 0 0;">${el.dataset.tips}</div>`:'')+(el.dataset.tipl?`<div style="margin-top:8px;border-top:1px solid rgba(255,255,255,.14);padding-top:7px;">${el.dataset.tipl}</div>`:'');
-      el.addEventListener('mouseenter', e=>showTipHTML(html, e));
-      el.addEventListener('mousemove', moveTip);
-      el.addEventListener('mouseleave', hideTip);
-    });
+    wireWaterfallTips();
   }
   else if(teamSub==='diagnostic'){ renderDimDetail(); newChart('team-radar', teamRadarCfg(t, dimSel)); }
+  else if(teamSub==='potential'){ wireWaterfallTips(); }
   else if(teamSub==='readiness'){ wireReadinessTips(); }
   else if(teamSub==='opportunities'){ renderTeamOppRows(); buildTeamMatrix(t.opps.map(o=>({...o, team:t.name, teamId:t.id}))); }
 }
@@ -21574,7 +21572,7 @@ function valueWaterfall(t, opt){
 function potentialPage(t){
   const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   const mid=o=>(o.fte[0]+o.fte[1])/2;
-  const W=valueWaterfall(t,{w:900,h:470,pt:54,pb:54,bar:110,fs:1.3});
+  const W=valueWaterfall(t,{w:1200,h:415,pt:56,pb:58,bar:132,fs:1.3});
   const opps=(t.opps||[]).slice().sort((a,b)=>mid(b)-mid(a));
   const gMax=Math.max(0.1,...W.grps.map(g=>g.fte));
 
@@ -21593,44 +21591,40 @@ function potentialPage(t){
       ${tile('After the enablers',W.laterFte.toFixed(1),'FTE · waiting on the foundation',ic.act)}
     </div>`;
 
-  const wfCard=`<div class="card span4" style="display:flex;flex-direction:column;height:470px;">
-      <div class="ch"><div class="ct">From total scope to full potential</div></div>
+  const wfCard=`<div class="card span6" style="display:flex;flex-direction:column;height:480px;">
+      <div class="ch"><div class="ct">From total scope to full potential</div>
+        <span style="font-size:10px;color:var(--muted);">hover a bar for the detail behind it</span></div>
       <div style="flex:1;position:relative;min-height:0;display:flex;align-items:stretch;justify-content:center;">${W.svg}</div>
     </div>`;
 
-  const levCard=`<div class="card span2" style="display:flex;flex-direction:column;height:470px;">
-      <div class="ch"><div class="ct">Overview of improvement levers</div></div>
-      <div style="margin-top:6px;">
-        ${W.grps.length?W.grps.map((g,i)=>`<div class="pot-lever">
-            <div class="hd"><span class="no" style="background:${g.dot}">${i+1}</span><span class="nm">${esc(g.label)}</span>
-              <span class="ft" style="color:${g.dot}">~${g.fte.toFixed(1)} FTE</span></div>
-            <div class="bar"><i style="width:${g.fte/gMax*100}%;background:${g.dot}"></i></div>
-            <div class="sub">${g.n} initiative${g.n===1?'':'s'} · ${Math.round(g.fte/Math.max(0.1,W.oppSum)*100)}% of what is identified</div>
-          </div>`).join(''):'<div class="rdy-none">No opportunities scoped yet.</div>'}
-      </div>
-    </div>`;
-
-  const oppCard=`<div class="card span6" style="display:flex;flex-direction:column;">
-      <div class="ch"><div class="ct">The opportunities behind the number</div>
+  // levers and the initiatives behind them — one table, grouped; the legend was just the roll-up
+  const byGrp=W.grps.map((g,i)=>({ ...g, no:i+1, list:opps.filter(o=>ttOf(o)===g.k).sort((a,b)=>mid(b)-mid(a)) }));
+  const oppRow=o=>{ const h=deriveHorizon(o,t), m=readinessModel(o,t), ok=m.verdict==='act';
+    return `<tr><td class="a" style="padding-left:30px;">${esc(o.activity||o.name||'Opportunity')}</td>
+        <td>${leverChip(o.lever)}</td>
+        <td><span class="nature nat-${o.nature}" title="${(typeof NAT_LONG!=='undefined'&&NAT_LONG[o.nature])||''}">${o.nature}</span></td>
+        <td><span class="pot-hz"><b>${h.key}</b>${(typeof HORIZON_LABEL!=='undefined'&&HORIZON_LABEL[h.key])||''}</span></td>
+        <td><span class="pot-vd" style="color:${ok?'#1D7044':'#C0392B'}">${ok?'Act now':'Fix readiness first'}</span></td>
+        <td class="f r">${fmtFte(o.fte)}</td></tr>`; };
+  const grpRow=g=>`<tr class="grp"><td colspan="5">
+        <span class="gno" style="background:${g.dot}">${g.no}</span><span class="gnm">${esc(g.label)}</span>
+        <span class="gsub">${g.n} initiative${g.n===1?'':'s'} · ${Math.round(g.fte/Math.max(0.1,W.oppSum)*100)}% of what is identified</span>
+      </td><td class="f r" style="color:${g.dot};">~${g.fte.toFixed(1)} FTE</td></tr>`;
+  const mergedCard=`<div class="card span6" style="display:flex;flex-direction:column;">
+      <div class="ch"><div class="ct">Improvement levers, and the initiatives behind them</div>
         <button class="ov-gobtn" onclick="setTeamSub('opportunities')">Opportunity detail →</button></div>
       <table class="pot-tbl" style="margin-top:4px;">
-        <thead><tr><th>Activity</th><th>Lever</th><th>Work nature</th><th>Horizon</th><th>Readiness</th><th class="r">FTE impact</th></tr></thead>
+        <thead><tr><th>Lever &amp; initiative</th><th>Type</th><th>Work nature</th><th>Horizon</th><th>Readiness</th><th class="r">FTE impact</th></tr></thead>
         <tbody>
-        ${opps.map(o=>{ const h=deriveHorizon(o,t), m=readinessModel(o,t), ok=m.verdict==='act';
-          return `<tr><td class="a">${esc(o.activity||o.name||'Opportunity')}</td>
-            <td>${leverChip(o.lever)}</td>
-            <td><span class="nature nat-${o.nature}" title="${(typeof NAT_LONG!=='undefined'&&NAT_LONG[o.nature])||''}">${o.nature}</span></td>
-            <td><span class="pot-hz"><b>${h.key}</b>${(typeof HORIZON_LABEL!=='undefined'&&HORIZON_LABEL[h.key])||''}</span></td>
-            <td><span class="pot-vd" style="color:${ok?'#1D7044':'#C0392B'}">${ok?'Act now':'Fix readiness first'}</span></td>
-            <td class="f r">${fmtFte(o.fte)}</td></tr>`; }).join('')}
-        <tr class="tot"><td class="a">Identified, bottom-up</td><td colspan="4" style="color:var(--muted);font-size:11px;">&Sigma; of the scoped opportunities · cross-checked against the ~${W.totalOpt.toFixed(1)} FTE top-down potential</td>
+        ${byGrp.length?byGrp.map(g=>grpRow(g)+g.list.map(oppRow).join('')).join(''):'<tr><td colspan="6" class="rdy-none">No opportunities scoped yet.</td></tr>'}
+        <tr class="tot"><td class="a">Identified, bottom-up</td><td colspan="4" style="color:var(--muted);font-size:11px;">&Sigma; of the scoped initiatives · cross-checked against the ~${W.totalOpt.toFixed(1)} FTE top-down potential</td>
           <td class="f r" style="color:var(--green);">~${W.oppSum.toFixed(1)} FTE</td></tr>
         </tbody>
       </table>
     </div>`;
 
   return `<div class="dd-section"><div class="eyebrow">Improvement potential</div>
-      ${kpi}<div class="dd6">${wfCard}${levCard}${oppCard}</div></div>`;
+      ${kpi}<div class="dd6">${wfCard}${mergedCard}</div></div>`;
 }
 // ===================== TEAM · AI READINESS TAB =====================
 // The lean maturity tab answers "how well does this team run today?". This one answers
@@ -21652,15 +21646,17 @@ const RDY_GROUPS=[['run',['data']],['land',['org','mgmt']],['scale',['proc','min
 // Built in HTML/CSS rather than SVG so it fills the card at any width, and so every bar can carry a tooltip.
 function rdyChartHTML(t){
   const G=rdyGateMap(t);
-  let y=''; for(let v=0;v<=5;v++) y+=`<span style="bottom:${v/5*100}%">${v}</span>`;
-  let gl=''; for(let v=0;v<=5;v++) gl+=`<div class="rdyc-gl${v===0?' zero':''}" style="bottom:${v/5*100}%"></div>`;
+  const SC=87;                       // a 5 tops out at 87% of the plot, leaving headroom for the value labels
+  const pc=v=>v/5*SC;
+  let y=''; for(let v=0;v<=5;v++) y+=`<span style="bottom:${pc(v)}%">${v}</span>`;
+  let gl=''; for(let v=0;v<=5;v++) gl+=`<div class="rdyc-gl${v===0?' zero':''}" style="bottom:${pc(v)}%"></div>`;
   let cols='', xs='', gs='', ci=0;
   RDY_GROUPS.forEach(([gk,keys])=>{
     const g=G[gk], col=gk==='aim'?'#98A2B3':g.st.color, st=gk==='aim'?'NOT A GATE':g.st.label.toUpperCase();
     const gStart=2+ci;
     keys.forEach(k=>{
       const cIdx=2+ci; ci++;
-      const v=t.scores[k], below=gk!=='aim'&&v<RDY_BAR, h=v/5*100;
+      const v=t.scores[k], below=gk!=='aim'&&v<RDY_BAR, h=pc(v);
       const tipRows=[
         ['Question', RDY_Q[gk]],
         ['Verdict', gk==='aim' ? 'Not a gate — it aims the work' : (below?`${RDY_BAR-v} below the AI readiness bar`:'Meets the AI readiness bar')],
@@ -21670,7 +21666,7 @@ function rdyChartHTML(t){
         +` data-t="${rdyEsc(rdyDimLabel(k))}" data-v="${v} / 5"`
         +` data-rows="${rdyEsc(tipRows.map(r=>r[0]+'§'+r[1]).join('¶'))}"`
         +` data-why="${rdyEsc(why)}">`
-        +(below?`<div class="rdyc-gap" style="bottom:${h}%;height:${(RDY_BAR-v)/5*100}%"></div>`:'')
+        +(below?`<div class="rdyc-gap" style="bottom:${h}%;height:${pc(RDY_BAR-v)}%"></div>`:'')
         +`<div class="rdyc-b" style="height:${h}%;background:${gk==='aim'?'#C7CDD4':scoreColor(v)}"></div>`
         +`<div class="rdyc-v" style="bottom:calc(${h}% + 7px);color:${below?'#C0392B':'var(--navy)'}">${v}</div>`
         +`</div>`;
@@ -21681,8 +21677,8 @@ function rdyChartHTML(t){
   });
   return `<div class="rdyc">
       <div class="rdyc-y">${y}</div>
-      <div class="rdyc-plot">${gl}${cols}<div class="rdyc-line" style="bottom:${RDY_BAR/5*100}%"></div></div>
-      <div class="rdyc-note"><span style="bottom:${RDY_BAR/5*100}%">AI READINESS<br>BAR</span></div>
+      <div class="rdyc-plot">${gl}${cols}<div class="rdyc-line" style="bottom:${pc(RDY_BAR)}%"></div></div>
+      <div class="rdyc-note"><span style="bottom:${pc(RDY_BAR)}%">AI READINESS<br>BAR</span></div>
       ${xs}${gs}
     </div>`;
 }
@@ -21708,23 +21704,48 @@ function readinessPage(t){
       <p class="rdy-p" style="margin-top:10px;">${open.length
         ? `<b style="color:${bind.st.color};">${rdyEsc(bind.low.label)} at ${bind.low.v}/5</b> is what holds this team back. Lifting it to ${bind.low.v>=RDY_BAR?4:RDY_BAR}/5 ${rdyEsc(rel.charAt(0).toLowerCase()+rel.slice(1))}`
         : `Every dimension clears the bar, so nothing here waits on readiness — this is where a first pilot should start.`}</p>
-      <div class="rdy-lev2">
-        <div>
-          <div class="rdy-eyeb" style="color:#1D7044;">Runnable now</div>
-          ${O.ready.length?O.ready.map(opp).join(''):'<div class="rdy-none">Nothing scoped clears the bar yet.</div>'}
-        </div>
-        <div>
-          <div class="rdy-eyeb" style="color:${O.held.length?'#C0392B':'var(--muted-2)'};">Behind the bar</div>
-          ${O.held.length?O.held.map(opp).join(''):'<div class="rdy-none">Nothing is held back.</div>'}
-        </div>
-      </div>
-      <div class="rdy-lev2" style="margin-top:12px;padding-top:12px;">
+      <div class="rdy-lev2" style="margin-top:20px;">
         <div class="rdy-fte" style="color:#1D7044;">~${O.readyFte.toFixed(1)}<small>FTE runnable today</small></div>
         <div class="rdy-fte" style="color:${O.heldFte>0?'#C0392B':'var(--muted-2)'};">~${O.heldFte.toFixed(1)}<small>FTE waiting on the bar</small></div>
       </div>
-      <p class="rdy-p" style="margin-top:auto;padding-top:13px;border-top:1px solid var(--divider);">Operating levers are never gated and carry potential of their own. Readiness picks the lever; the improvement potential sizes it.</p>
+      <p class="rdy-p" style="margin-top:14px;padding-top:13px;border-top:1px solid var(--divider);">Operating levers are never gated and carry potential of their own. Readiness picks the lever; the improvement potential sizes it.</p>
     </div>`;
-  return `<div class="dd-section"><div class="eyebrow">AI readiness</div><div class="dd6">${chart}${side}</div></div>`;
+  // initiatives split by the readiness gate — same table language as the Improvement potential tab
+  const row=o=>{ const h=deriveHorizon(o,t), m=readinessModel(o,t);
+    return `<tr><td class="a" style="padding-left:30px;">${rdyEsc(o.activity||o.name||'Opportunity')}</td>
+        <td>${leverChip(o.lever)}</td>
+        <td><span class="nature nat-${o.nature}" title="${(typeof NAT_LONG!=='undefined'&&NAT_LONG[o.nature])||''}">${o.nature}</span></td>
+        <td><span class="pot-hz"><b>${h.key}</b>${(typeof HORIZON_LABEL!=='undefined'&&HORIZON_LABEL[h.key])||''}</span></td>
+        <td><span class="pot-hz">${rdyEsc(m.basis||'')}</span></td>
+        <td class="f r">${fmtFte(o.fte)}</td></tr>`; };
+  const band=(lab,sub,col,list,fte)=>`<tr class="grp"><td colspan="5">
+        <span class="gno" style="background:${col}">${list.length}</span><span class="gnm" style="color:${col}">${lab}</span>
+        <span class="gsub">${sub}</span></td><td class="f r" style="color:${col};">~${fte.toFixed(1)} FTE</td></tr>`
+      + (list.length?list.map(row).join('')
+         :`<tr><td colspan="6" class="rdy-none" style="padding-left:30px;">${lab==='Runnable now'?'Nothing scoped clears the bar yet.':'Nothing is held back.'}</td></tr>`);
+  const tbl=`<div class="card span6" style="display:flex;flex-direction:column;">
+      <div class="ch"><div class="ct">Initiatives, runnable now and behind the bar</div>
+        <button class="ov-gobtn" onclick="setTeamSub('potential')">Improvement potential →</button></div>
+      <table class="pot-tbl" style="margin-top:4px;">
+        <thead><tr><th>Initiative</th><th>Lever</th><th>Work nature</th><th>Horizon</th><th>Gate basis</th><th class="r">FTE impact</th></tr></thead>
+        <tbody>
+          ${band('Runnable now','clears the AI readiness bar today','#1D7044',O.ready,O.readyFte)}
+          ${band('Behind the bar','unlocks once the binding constraint is lifted',O.held.length?'#C0392B':'#98A2B3',O.held,O.heldFte)}
+        </tbody>
+      </table>
+    </div>`;
+  return `<div class="dd-section"><div class="eyebrow">AI readiness</div><div class="dd6">${chart}${side}${tbl}</div></div>`;
+}
+// waterfall tooltips — every bar and every stacked segment, on whichever tab drew it
+function wireWaterfallTips(){
+  document.querySelectorAll('#team-sub-content [data-tip]').forEach(el=>{
+    const html=`<div class="tip-h"><b>${el.dataset.tip}</b>${el.dataset.tipv?`<span>${el.dataset.tipv}</span>`:''}</div>`
+      +(el.dataset.tips?`<div class="tip-sub" style="margin:2px 0 0;">${el.dataset.tips}</div>`:'')
+      +(el.dataset.tipl?`<div style="margin-top:8px;border-top:1px solid rgba(255,255,255,.14);padding-top:7px;">${el.dataset.tipl}</div>`:'');
+    el.addEventListener('mouseenter', e=>showTipHTML(html, e));
+    el.addEventListener('mousemove', moveTip);
+    el.addEventListener('mouseleave', hideTip);
+  });
 }
 // bar tooltips — reuse the shared tooltip the waterfall and the heatmap already use
 function wireReadinessTips(){
