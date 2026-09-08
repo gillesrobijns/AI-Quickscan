@@ -559,11 +559,83 @@ html.dark .nat-R{background:#1E2C45;} html.dark .nat-K{background:#2A2440;}
 .rdy-p b { color:var(--text); font-weight:700; }
 .rdy-eyeb { font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:var(--muted-2); }
 .rdy-lev2 { display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-top:16px; padding-top:15px; border-top:1px solid var(--divider); }
+.rdy-lev2 > div { min-width:0; }
 .rdy-lv { display:flex; align-items:center; gap:7px; font-size:11px; font-weight:600; color:var(--text); padding:4.5px 0; line-height:1.35; }
 .rdy-lv i { width:8px; height:8px; border-radius:2.5px; flex-shrink:0; display:inline-block; }
 .rdy-lv small { margin-left:auto; font-size:8.5px; font-weight:800; letter-spacing:.4px; text-transform:uppercase; white-space:nowrap; }
 .rdy-fte { font-family:var(--fh); font-size:17px; font-weight:900; }
 .rdy-fte small { font-size:9.5px; font-weight:700; color:var(--muted-2); display:block; margin-top:2px; }
+/* readiness chart — HTML/CSS so it fills the card at any size */
+.rdyc { flex:1; min-height:0; display:grid; grid-template-columns:34px repeat(6,1fr) 104px; grid-template-rows:1fr auto auto; column-gap:10px; }
+.rdyc-y { grid-column:1; grid-row:1; position:relative; }
+.rdyc-y span { position:absolute; right:0; transform:translateY(50%); font-size:9.5px; font-weight:700; color:var(--muted-2); }
+.rdyc-plot { grid-column:2 / span 6; grid-row:1; position:relative; display:grid; grid-template-columns:repeat(6,1fr); column-gap:10px; }
+.rdyc-gl { position:absolute; left:-8px; right:0; height:0; border-top:1px solid #EEF1F4; }
+.rdyc-gl.zero { border-top-color:#D0D5DD; }
+.rdyc-line { position:absolute; left:-8px; right:-10px; height:0; border-top:2px dashed var(--navy); z-index:3; }
+.rdyc-note { grid-column:8; grid-row:1; position:relative; }
+.rdyc-note span { position:absolute; left:0; transform:translateY(-50%); font-size:10px; font-weight:800; letter-spacing:.5px; color:var(--navy); line-height:1.25; }
+.rdyc-col { position:relative; z-index:2; cursor:default; }
+.rdyc-col:hover .rdyc-b { filter:brightness(1.06); }
+.rdyc-b { position:absolute; left:0; right:0; bottom:0; border-radius:3px 3px 0 0; }
+.rdyc-gap { position:absolute; left:0; right:0; border:1px dashed #E4A79F; border-bottom:none; background:#FBE7E4; border-radius:3px 3px 0 0; }
+.rdyc-v { position:absolute; left:0; right:0; text-align:center; font-family:var(--fh); font-size:13px; font-weight:900; }
+.rdyc-x { grid-row:2; padding-top:7px; text-align:center; font-size:10px; font-weight:700; color:#475467; line-height:1.25; }
+.rdyc-g { grid-row:3; padding-top:9px; text-align:center; }
+.rdyc-g i { display:block; height:3px; border-radius:2px; margin-bottom:6px; }
+.rdyc-g b { display:block; font-size:10.5px; font-weight:800; line-height:1.3; }
+.rdyc-g small { display:block; font-size:8.5px; font-weight:700; letter-spacing:.7px; margin-top:3px; opacity:.85; }
+.rdy-opp { padding:7px 0; border-top:1px solid var(--divider); }
+.rdy-opp:first-of-type { border-top:none; padding-top:3px; }
+.rdy-opp .nm { font-size:11px; font-weight:650; color:var(--text); line-height:1.35; }
+.rdy-opp .mt { display:flex; align-items:center; gap:6px; margin-top:5px; }
+.rdy-opp .mt .lever-chip { font-size:8.5px; padding:2px 6px; }
+.rdy-opp .f { margin-left:auto; font-family:var(--fh); font-weight:800; font-size:10.5px; white-space:nowrap; color:var(--muted); }
+.rdy-none { font-size:11px; color:var(--muted-2); padding:5px 0; }
+/* improvement potential tab */
+.pot-row { display:grid; grid-template-columns:1fr 150px 74px; gap:11px; align-items:center; padding:9px 0; border-top:1px solid var(--divider); }
+.pot-row:first-of-type { border-top:none; }
+.pot-nm { font-size:11.5px; font-weight:650; line-height:1.35; display:flex; align-items:center; gap:7px; }
+.pot-tk { height:16px; border-radius:3px; background:var(--surface-2); position:relative; overflow:hidden; }
+.pot-tk i { position:absolute; left:0; top:0; bottom:0; background:#D6DBE1; }
+.pot-tk b { position:absolute; left:0; top:0; bottom:0; background:var(--green); }
+.pot-val { text-align:right; font-family:var(--fh); font-size:12.5px; font-weight:900; color:var(--green); }
+.pot-val small { display:block; font-size:9px; font-weight:700; color:var(--muted-2); }
+.pot-lv { display:grid; grid-template-columns:150px 1fr 72px; gap:11px; align-items:center; padding:9px 0; border-top:1px solid var(--divider); }
+.pot-lv:first-of-type { border-top:none; }
+.pot-lv .n { font-size:11.5px; font-weight:650; display:flex; align-items:center; gap:7px; }
+.pot-lv .n i { width:9px; height:9px; border-radius:2.5px; flex-shrink:0; display:inline-block; }
+.pot-lv .t { height:16px; border-radius:3px; background:var(--surface-2); position:relative; overflow:hidden; }
+.pot-lv .t i { position:absolute; left:0; top:0; bottom:0; border-radius:3px; }
+.pot-lv .v { text-align:right; font-family:var(--fh); font-size:12.5px; font-weight:900; }
+.pot-lv .v small { display:block; font-size:9px; font-weight:700; color:var(--muted-2); }
+.pot-tbl { width:100%; border-collapse:collapse; }
+.pot-tbl th { text-align:left; font-size:8.5px; font-weight:800; letter-spacing:.9px; text-transform:uppercase; color:var(--muted-2); padding:0 10px 8px 0; border-bottom:1px solid var(--divider); }
+.pot-tbl th.r, .pot-tbl td.r { text-align:right; padding-right:0; }
+.pot-tbl td { font-size:11.5px; padding:9px 10px 9px 0; border-bottom:1px solid var(--divider); vertical-align:middle; }
+.pot-tbl tr:last-child td { border-bottom:none; }
+.pot-tbl td.a { font-weight:650; }
+.pot-tbl td.f { font-family:var(--fh); font-weight:900; font-size:12.5px; white-space:nowrap; }
+.pot-tbl tr.tot td { border-top:2px solid var(--navy); border-bottom:none; padding-top:11px; font-weight:800; }
+.pot-hz { font-size:10px; font-weight:700; color:var(--muted); white-space:nowrap; }
+.pot-hz b { display:block; font-size:8.5px; font-weight:800; letter-spacing:.6px; text-transform:uppercase; color:var(--muted-2); }
+.pot-vd { font-size:9.5px; font-weight:800; letter-spacing:.4px; text-transform:uppercase; white-space:nowrap; }
+.pot-note { font-size:11px; color:var(--muted); line-height:1.6; margin-top:auto; padding-top:13px; border-top:1px solid var(--divider); }
+.pot-note b { color:var(--text); font-weight:700; }
+.pot-lever { padding:11px 0; border-top:1px solid var(--divider); }
+.pot-lever:first-of-type { border-top:none; padding-top:3px; }
+.pot-lever .hd { display:flex; align-items:center; gap:8px; }
+.pot-lever .no { width:17px; height:17px; border-radius:5px; color:#fff; font-family:var(--fh); font-size:10px; font-weight:900; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.pot-lever .nm { font-size:11.5px; font-weight:700; }
+.pot-lever .ft { margin-left:auto; font-family:var(--fh); font-size:12.5px; font-weight:900; white-space:nowrap; }
+.pot-lever .bar { height:8px; border-radius:4px; background:var(--surface-2); position:relative; overflow:hidden; margin-top:6px; }
+.pot-lever .bar i { position:absolute; left:0; top:0; bottom:0; border-radius:4px; }
+.pot-lever .sub { font-size:10px; color:var(--muted-2); font-weight:650; margin-top:4px; }
+.pot-rec { display:grid; grid-template-columns:118px 1fr 78px; gap:11px; align-items:center; margin-top:9px; }
+.pot-rec .n { font-size:11px; font-weight:650; color:var(--muted); }
+.pot-rec .t { height:14px; border-radius:3px; background:var(--surface-2); position:relative; overflow:hidden; }
+.pot-rec .t i { position:absolute; left:0; top:0; bottom:0; border-radius:3px; }
+.pot-rec .v { text-align:right; font-family:var(--fh); font-size:12.5px; font-weight:900; white-space:nowrap; }
 .rdy-gopp span.f { margin-left:auto; font-family:var(--fh); font-weight:800; color:var(--text); white-space:nowrap; }
 
 /* ===== analyses inventory (artifact cards) ===== */
@@ -21194,25 +21266,10 @@ function renderTeamContent(){
     <div class="dd-verdict" style="border-left:3px solid ${lev(t.lever).t};">
       <span class="dd-verdict-l">Verdict</span><span class="dd-verdict-t">${t.finding}</span>
     </div>`;
-  const secTiles=`
-    <!-- SECTION 1 · KEY DATA TILES -->
-    <div class="dd-section">
-      <div class="dd6">
-        <div class="grp-lbl">Baseline</div>
-        <div class="grp-lbl">Overall score</div>
-        <div class="grp-lbl pot">Potential</div>
-        ${tile('FTE in scope',t.fte,'team headcount',ic.fte)}
-        ${tile('Activities mapped',t.activities.length,'in baseline',ic.act)}
-        ${tile('Weighted score',weightedOverall(t).toFixed(1),'of 5',ic.score)}
-        ${tile('AI readiness',t.readinessScore+'%','weakest gate, not an average',ic.ready)}
-        ${tile('Improvement potential',t.potential+'%','assessed',ic.pot,true)}
-        <div class="kpi-box pot-box"><div><div class="kpi-eyebrow">FTE impact</div><div class="kpi-v" id="kpi-optfte">~${totalOpt.toFixed(1)}</div><div class="kpi-sub">optimisable · editable in baseline</div></div><div class="kpi-icon">${ic.impact}</div></div>
-      </div>
-    </div>`;
   const secDiag=`
-    <!-- SECTION 2 · DIAGNOSTIC -->
+    <!-- SECTION 2 · LEAN MATURITY -->
     <div class="dd-section">
-      <div class="eyebrow">Diagnostic</div>
+      <div class="eyebrow">Lean maturity</div>
       <div class="dd6">
         <div class="card span2" style="display:flex;flex-direction:column;height:560px;">
           <div class="ch"><div class="ct">Lean maturity assessment</div>
@@ -21314,9 +21371,9 @@ function renderTeamContent(){
   // ===== paged view — compose the active sub-page (Overview · Baseline · Diagnostic · Opportunities · Transfo roadmap) =====
   const POS=POSTURE[teamPosture(t)]; const hl=headlineLever(t); const HL=HLEVERS[hl.key];
   const midf=r=>(r[0]+r[1])/2;
-  // transformation-type groups — aligned with the roadmap (type = priority, lever + initiative = detail); shared by Key priorities + the waterfall identified bar
-  const grpMap={}; t.opps.forEach(o=>{ const k=ttOf(o); (grpMap[k]=grpMap[k]||{fte:0,n:0,items:[]}); grpMap[k].fte+=midf(o.fte); grpMap[k].n++; grpMap[k].items.push({name:o.activity, lever:lev(o.lever).label, fteStr:fmtFte(o.fte)}); });
-  const grps=Object.entries(grpMap).map(([k,v])=>({ k, fte:v.fte, n:v.n, items:v.items, label:TTYPES[k].label, dot:TTYPES[k].dot })).sort((a,b)=>TTYPE_ORDER.indexOf(a.k)-TTYPE_ORDER.indexOf(b.k));
+  // transformation-type groups + the value waterfall — ONE derivation, shared with the Improvement potential tab
+  const WF=valueWaterfall(t);
+  const grps=WF.grps;
   const grpMax=Math.max(0.1,...grps.map(g=>g.fte));
   const topG=grps[0];
   const posturePhrase={ foundation:'needs to get its data and operating basics in place before leaning on technology', build:'can build the missing foundations while scaling what already works', scale:'is ready to act now — its data and appetite are strong enough to start today' }[teamPosture(t)]||'is still being assessed';
@@ -21350,10 +21407,11 @@ function renderTeamContent(){
     tile('Inefficiencies flagged',t.inefficiency.length,'across activities',warnIc),
     `<div class="kpi-box pot-box"><div><div class="kpi-eyebrow">FTE impact</div><div class="kpi-v" id="kpi-optfte">~${totalOpt.toFixed(1)}</div><div class="kpi-sub">optimisable · click balls to set</div></div><div class="kpi-icon">${ic.impact}</div></div>`,
   ]);
+  const dimHi=dimScored.length?dimScored.reduce((a,b)=>b.v>a.v?b:a):null;
   const kpiDiag=kpiStrip([
     tile('Weighted score',weightedOverall(t).toFixed(1),'of 5',ic.score),
-    tile('AI readiness',t.readinessScore+'%','separate read — see AI readiness',ic.ready),
-    tile('Improvement potential',t.potential+'%','assessed',ic.pot,true),
+    tile('Strongest dimension',dimHi?dimHi.v+'/5':'—',dimHi?dimHi.l:'',ic.score),
+    tile('Weakest dimension',dimLo?dimLo.v+'/5':'—',dimLo?dimLo.l:'',warnIc),
     tile('Focus areas',lowDims,'scoring ≤ 2 of 5',warnIc),
   ]);
   const kpiOpp=kpiStrip([
@@ -21362,53 +21420,13 @@ function renderTeamContent(){
     tile('Act now',actNow,'gate already cleared',ic.impact),
     `<div class="kpi-box pot-box"><div><div class="kpi-eyebrow">Bottom-up Σ</div><div class="kpi-v">~${oppSum.toFixed(1)}</div><div class="kpi-sub">FTE across opportunities</div></div><div class="kpi-icon">${ic.pot}</div></div>`,
   ]);
-  // value waterfall (scope-reduction bridge): Total scope − Identified − Remaining = scope at full potential.
-  // Only the Identified bar is highlighted; scope & remaining are greyed. Fully connected, ending on the baseline.
-  const ovCov=Math.min(100,Math.round(oppSum/Math.max(0.1,totActFte)*100)); // identified as a share of total scope (e.g. 8.5/62)
-  const wfIdent=Math.min(oppSum,totActFte);            // bottom-up identified (the highlight)
-  const wfRemain=Math.max(0,totalOpt-oppSum);          // additional top-down potential, not yet scoped
-  const wfTarget=Math.max(0,totActFte-wfIdent);        // scope after capturing the identified opportunities
-  const wfEnd=Math.max(0,totActFte-totalOpt);          // scope if the FULL potential is captured (never fully feasible)
-  const wfW=580,wfH=242,wfPT=24,wfPB=44,wfPL=12,wfPR=12; const wfPH=wfH-wfPT-wfPB; const wfIW=wfW-wfPL-wfPR; const wfN=5; const wfSlot=wfIW/wfN; const wfBar=Math.min(54,wfSlot-22);
-  const wfCx=i=>wfPL+wfSlot*i+wfSlot/2; const wfBx=i=>wfCx(i)-wfBar/2;
-  const wfScale=Math.max(totActFte,0.1); const wfY=v=>wfPT+wfPH*(1-v/wfScale); const wfHt=v=>wfPH*Math.max(0,v)/wfScale;
-  const cTxt=cssVar('--muted')||'#64748b', cMut=cssVar('--muted-2')||'#94a3b8', cGreen=cssVar('--green')||'#006843', cScope='#cbd5e1', cGhost='#e1e6ec';
-  const wfTxt=(x,y,s,sz,col,w)=>`<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" text-anchor="middle" font-family="Inter,sans-serif" font-size="${sz}" fill="${col}"${w?` font-weight="${w}"`:''}>${s}</text>`;
-  const wfRct=(x,y,w,h,fill,extra)=>`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${Math.max(0,h).toFixed(1)}" rx="2.5" fill="${fill}"${extra||''}/>`;
-  // col2: identified delta, hangs from the TOP of total scope — the only highlighted bar, stacked by lever (matches Key-priorities numbering)
-  const wfEsc=s=>String(s).replace(/&/g,'&amp;');
-  let wfCum=0;
-  const wfSegs=grps.map((g,i)=>{ const yT=wfY(totActFte-wfCum); const h=wfHt(g.fte); wfCum+=g.fte;
-    const listHtml=g.items.map(it=>`<div class='tip-row'><span>${wfEsc(it.name)} <i style='opacity:.55;font-style:normal;'>· ${wfEsc(it.lever)}</i></span><b>${it.fteStr} FTE</b></div>`).join('');
-    const tip=` style="cursor:default" data-tip="${wfEsc(g.label)}" data-tipv="~${g.fte.toFixed(1)} FTE" data-tips="${g.n} initiative${g.n===1?'':'s'} · scoped (bottom-up)" data-tipl="${listHtml}"`;
-    return wfRct(wfBx(1),yT,wfBar,h,g.dot,` stroke="#fff" stroke-width="1.2"${tip}`)+(h>=15?wfTxt(wfCx(1),yT+h/2+3.4,String(i+1),9.5,'#fff',800):''); }).join('');
-  const wfLine=(x1,y1,x2,y2)=>`<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="${cMut}" stroke-width="1" stroke-dasharray="4 3"/>`;
-  const wfConn = wfLine(wfBx(0)+wfBar, wfY(totActFte), wfBx(1), wfY(totActFte))   // scope top → identified top (build-down begins)
-    + wfLine(wfBx(1)+wfBar, wfY(wfTarget), wfBx(2), wfY(wfTarget))                // identified bottom → target-scope top
-    + wfLine(wfBx(2)+wfBar, wfY(wfTarget), wfBx(3), wfY(wfTarget))                // target-scope top → remaining top
-    + wfLine(wfBx(3)+wfBar, wfY(wfEnd), wfBx(4), wfY(wfEnd));                     // remaining bottom → full-potential scope (connects to the baseline column)
-  const wfXL=[['Total scope','today'],['Identified','scoped now'],['Target scope','if scoped done'],['Remaining','still to find'],['Full potential','if all captured']];
-  const wfSvg=`<svg viewBox="0 0 ${wfW} ${wfH}" width="100%" style="max-height:100%;" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
-      ${wfConn}
-      ${wfRct(wfBx(0),wfY(totActFte),wfBar,wfHt(totActFte),cScope,` style="cursor:default" data-tip="Total scope" data-tipv="${+totActFte.toFixed(1)} FTE" data-tips="current activity workload"`)}
-      ${wfSegs}
-      ${wfRct(wfBx(2),wfY(wfTarget),wfBar,wfHt(wfTarget),cScope,` style="cursor:default" data-tip="Target scope" data-tipv="~${+wfTarget.toFixed(1)} FTE" data-tips="workload once the scoped work is delivered"`)}
-      ${wfRemain>0.05?wfRct(wfBx(3),wfY(wfTarget),wfBar,wfHt(wfRemain),cGhost,` stroke="${cMut}" stroke-width="1" stroke-dasharray="3 2" style="cursor:default" data-tip="Remaining potential" data-tipv="~${+wfRemain.toFixed(1)} FTE" data-tips="top-down, still to scope"`):''}
-      ${wfRct(wfBx(4),wfY(wfEnd),wfBar,wfHt(wfEnd),cScope,` style="cursor:default" data-tip="Scope at full potential" data-tipv="~${+wfEnd.toFixed(1)} FTE" data-tips="if all ~${+totalOpt.toFixed(1)} FTE potential were captured (never fully feasible)"`)}
-      ${wfTxt(wfCx(0),wfY(totActFte)-7,''+(+totActFte.toFixed(1)),11,cTxt,800)}
-      ${wfIdent>0.05?wfTxt(wfCx(1),wfY(totActFte)-7,''+(+wfIdent.toFixed(1)),11,cGreen,800):''}
-      ${wfTxt(wfCx(2),wfY(wfTarget)-7,''+(+wfTarget.toFixed(1)),11,cMut,700)}
-      ${wfRemain>0.05?wfTxt(wfCx(3),wfY(wfTarget)-7,''+(+wfRemain.toFixed(1)),11,cMut,700):''}
-      ${wfTxt(wfCx(4),wfY(wfEnd)-7,''+(+wfEnd.toFixed(1)),11,cMut,700)}
-      ${wfXL.map((p,i)=>wfTxt(wfCx(i),wfPT+wfPH+16,p[0],9.5,i===1?cGreen:cTxt,700)+wfTxt(wfCx(i),wfPT+wfPH+28,p[1],8,cMut,600)).join('')}
-    </svg>`;
   const waterfallCard=`<div class="card span3" style="display:flex;flex-direction:column;height:clamp(300px, calc((100vh - 300px) / 2), 560px);">
-      <div class="ch"><div class="ct">Value waterfall</div><div style="display:flex;align-items:center;gap:10px;"><span class="ov-chip-kpi" style="color:var(--green);">${ovCov}%<small>of scope identified</small></span><button class="ov-gobtn" onclick="setTeamSub('opportunities')">Opportunities →</button></div></div>
-      <div id="ov-wf" style="flex:1;position:relative;min-height:0;display:flex;align-items:center;justify-content:center;">${wfSvg}</div>
-      <div style="font-size:9px;color:var(--muted-2);text-align:center;line-height:1.4;padding:2px 6px 0;">Only the <span style="color:${cGreen};font-weight:700;">identified opportunities</span> are highlighted — grey bars show scope shrinking from ${+totActFte.toFixed(0)} toward ~${+wfEnd.toFixed(0)} FTE if the full potential is captured.</div>
+      <div class="ch"><div class="ct">Value waterfall</div><div style="display:flex;align-items:center;gap:10px;"><span class="ov-chip-kpi" style="color:var(--green);">${WF.cov}%<small>of scope identified</small></span><button class="ov-gobtn" onclick="setTeamSub('potential')">Improvement potential →</button></div></div>
+      <div id="ov-wf" style="flex:1;position:relative;min-height:0;display:flex;align-items:center;justify-content:center;">${WF.svg}</div>
+      <div style="font-size:9px;color:var(--muted-2);text-align:center;line-height:1.4;padding:2px 6px 0;">The potential comes off in three steps — <span style="color:var(--green);font-weight:700;">addressable now</span>, <span style="color:var(--amber);font-weight:700;">after the enablers</span>, and not yet identified — leaving ~${+WF.wfEnd.toFixed(0)} FTE of the ${+WF.totActFte.toFixed(0)} FTE scope.</div>
     </div>`;
-  const radarCard=`<div class="card span3 ov-clickcard" onclick="setTeamSub('diagnostic')" title="Open the Diagnostic page" style="display:flex;flex-direction:column;height:clamp(300px, calc((100vh - 300px) / 2), 560px);">
-      <div class="ch"><div class="ct">Lean maturity assessment</div><button class="ov-gobtn" onclick="event.stopPropagation();setTeamSub('diagnostic')">Diagnostic →</button></div>
+  const radarCard=`<div class="card span3 ov-clickcard" onclick="setTeamSub('diagnostic')" title="Open the Lean maturity page" style="display:flex;flex-direction:column;height:clamp(300px, calc((100vh - 300px) / 2), 560px);">
+      <div class="ch"><div class="ct">Lean maturity assessment</div><button class="ov-gobtn" onclick="event.stopPropagation();setTeamSub('diagnostic')">Lean maturity →</button></div>
       <div style="flex:1;position:relative;min-height:0;"><canvas id="ov-radar"></canvas></div>
       ${dimLo?`<div style="font-size:9.5px;color:var(--muted-2);text-align:center;padding:2px 6px 0;">Focus area — <b style="color:var(--text);">${dimLo.l} (${dimLo.v}/5)</b>, the weakest dimension</div>`:''}
     </div>`;
@@ -21422,8 +21440,8 @@ function renderTeamContent(){
       </div>
     </div>`;
   const ovGrid=`<div class="dd-section"><div class="dd6">${waterfallCard}${keyPrioCard}${workloadCard}${radarCard}</div></div>`;
-  const pages={ overview:ovGrid, baseline:kpiBaseline+secBaseline, diagnostic:kpiDiag+secDiag, readiness:readinessPage(t), analyses:analysesPage(t), opportunities:kpiOpp+secOpp, roadmap:teamRoadmapHTML(t) };
-  c.innerHTML = secVerdict + subnav + `<div id="team-sub-content">${pages[teamSub]||pages.overview}</div>`;
+  const pages={ overview:ovGrid, baseline:kpiBaseline+secBaseline, diagnostic:kpiDiag+secDiag, potential:potentialPage(t), readiness:readinessPage(t), analyses:analysesPage(t), opportunities:kpiOpp+secOpp, roadmap:teamRoadmapHTML(t) };
+  c.innerHTML = (teamSub==='potential'?'':secVerdict) + subnav + `<div id="team-sub-content">${pages[teamSub]||pages.overview}</div>`;
 
   if(teamSub==='overview'){
     const txt=cssVar('--muted'), grid=cssVar('--divider');
@@ -21437,7 +21455,7 @@ function renderTeamContent(){
         plugins:{ legend:{display:false}, tooltip:{ callbacks:{ title:items=>{ const l=items[0]?.label; return Array.isArray(l)?l.join(' '):l; }, label:c=>' '+c.parsed.y+' FTE' } } },
         scales:{ x:{ grid:{display:false}, ticks:{color:txt, font:{size:8.5}, maxRotation:0, minRotation:0, autoSkip:false } }, y:{ grid:{color:grid}, ticks:{color:txt, font:{size:10}}, beginAtZero:true } } } });
     // waterfall tooltips — compact, structured (title · value · sub) in the shared tooltip
-    document.querySelectorAll('#ov-wf [data-tip]').forEach(el=>{
+    document.querySelectorAll('#team-sub-content [data-tip]').forEach(el=>{
       const html=`<div class="tip-h"><b>${el.dataset.tip}</b>${el.dataset.tipv?`<span>${el.dataset.tipv}</span>`:''}</div>`+(el.dataset.tips?`<div class="tip-sub" style="margin:2px 0 0;">${el.dataset.tips}</div>`:'')+(el.dataset.tipl?`<div style="margin-top:8px;border-top:1px solid rgba(255,255,255,.14);padding-top:7px;">${el.dataset.tipl}</div>`:'');
       el.addEventListener('mouseenter', e=>showTipHTML(html, e));
       el.addEventListener('mousemove', moveTip);
@@ -21445,33 +21463,183 @@ function renderTeamContent(){
     });
   }
   else if(teamSub==='diagnostic'){ renderDimDetail(); newChart('team-radar', teamRadarCfg(t, dimSel)); }
+  else if(teamSub==='readiness'){ wireReadinessTips(); }
   else if(teamSub==='opportunities'){ renderTeamOppRows(); buildTeamMatrix(t.opps.map(o=>({...o, team:t.name, teamId:t.id}))); }
 }
 const TEAM_SUBS=[
   { key:'overview',      label:'Overview' },
   { key:'baseline',      label:'Baseline' },
   { key:'diagnostic',    label:'Lean maturity' },
+  { key:'potential',     label:'Improvement potential' },
   { key:'readiness',     label:'AI readiness' },
   { key:'analyses',      label:'Analyses' },
   { key:'opportunities', label:'Opportunities' },
   { key:'roadmap',       label:'Transfo roadmap' },
 ];
+// ===================== VALUE WATERFALL — ONE implementation =====================
+// Five-step bridge. Total scope, then the improvement potential taken off in THREE distinct steps —
+// addressable now (clears the AI readiness bar) · addressable after the enablers (scoped but gated) ·
+// not yet identified (top-down, no initiative yet) — ending on the scope that remains.
+// A bracket over the three middle steps carries the potential as one figure.
+// Used by the team Overview and by the Improvement potential tab — never duplicated.
+function valueWaterfall(t, opt){
+  opt=opt||{};
+  const midf=r=>(r[0]+r[1])/2;
+  const totActFte=t.activities.reduce((s,a)=>s+a.fte,0);
+  const totalOpt=teamOptTotal(t);
+  const oppsAll=t.opps||[];
+  const oppSum=oppsAll.reduce((s,o)=>s+midf(o.fte),0);
+  const isNow=o=>readinessModel(o,t).verdict==='act';
+  const nowFte=oppsAll.filter(isNow).reduce((s,o)=>s+midf(o.fte),0);
+  const laterFte=oppsAll.filter(o=>!isNow(o)).reduce((s,o)=>s+midf(o.fte),0);
+  const notYet=Math.max(0,totalOpt-oppSum);
+  // transformation-type groups across ALL opportunities — drives the lever legend and the stacking
+  const grpMap={}; oppsAll.forEach(o=>{ const k=ttOf(o); (grpMap[k]=grpMap[k]||{fte:0,n:0,items:[]});
+    grpMap[k].fte+=midf(o.fte); grpMap[k].n++; grpMap[k].items.push({name:o.activity, lever:lev(o.lever).label, fteStr:fmtFte(o.fte)}); });
+  const grps=Object.entries(grpMap).map(([k,v])=>({ k, fte:v.fte, n:v.n, items:v.items, label:TTYPES[k].label, dot:TTYPES[k].dot }))
+    .sort((a,b)=>TTYPE_ORDER.indexOf(a.k)-TTYPE_ORDER.indexOf(b.k));
+  const gIdx={}; grps.forEach((g,i)=>gIdx[g.k]=i+1);
+  // per-bucket stacking, same transformation-type order
+  const bucket=(list)=>{ const m={}; list.forEach(o=>{ const k=ttOf(o); (m[k]=m[k]||{fte:0,n:0,items:[]});
+      m[k].fte+=midf(o.fte); m[k].n++; m[k].items.push({name:o.activity, lever:lev(o.lever).label, fteStr:fmtFte(o.fte)}); });
+    return Object.entries(m).map(([k,v])=>({ k, ...v, label:TTYPES[k].label, dot:TTYPES[k].dot, no:gIdx[k] }))
+      .sort((a,b)=>TTYPE_ORDER.indexOf(a.k)-TTYPE_ORDER.indexOf(b.k)); };
+  const segNow=bucket(oppsAll.filter(isNow)), segLater=bucket(oppsAll.filter(o=>!isNow(o)));
+  const cov=Math.min(100,Math.round(oppSum/Math.max(0.1,totActFte)*100));
+  const wfEnd=Math.max(0,totActFte-totalOpt);
+
+  const wfW=opt.w||580, wfH=opt.h||242, wfPT=opt.pt||42, wfPB=opt.pb||44, wfPL=12, wfPR=12;
+  const wfPH=wfH-wfPT-wfPB, wfIW=wfW-wfPL-wfPR, wfN=5, wfSlot=wfIW/wfN, wfBar=Math.min(opt.bar||54,wfSlot-22);
+  const wfCx=i=>wfPL+wfSlot*i+wfSlot/2, wfBx=i=>wfCx(i)-wfBar/2;
+  const wfScale=Math.max(totActFte,0.1), wfY=v=>wfPT+wfPH*(1-v/wfScale), wfHt=v=>wfPH*Math.max(0,v)/wfScale;
+  const fs=opt.fs||1;
+  const cTxt=cssVar('--muted')||'#64748b', cMut=cssVar('--muted-2')||'#94a3b8', cGreen=cssVar('--green')||'#006843',
+        cAmber=cssVar('--amber')||'#B8620A', cScope='#cbd5e1', cGhost='#e9edf1';
+  const T=(x,y,str,sz,col,w,a)=>`<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" text-anchor="${a||'middle'}" font-family="Inter,sans-serif" font-size="${(sz*fs).toFixed(1)}" fill="${col}"${w?` font-weight="${w}"`:''}>${str}</text>`;
+  const R=(x,y,w,h,fill,extra)=>`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${Math.max(0,h).toFixed(1)}" rx="2.5" fill="${fill}"${extra||''}/>`;
+  const E=str=>String(str).replace(/&/g,'&amp;');
+  const tipList=items=>items.map(it=>`<div class='tip-row'><span>${E(it.name)} <i style='opacity:.55;font-style:normal;'>· ${E(it.lever)}</i></span><b>${it.fteStr} FTE</b></div>`).join('');
+
+  // running tops
+  const r0=totActFte, r1=r0-nowFte, r2=r1-laterFte, r3=Math.max(0,r2-notYet);
+  const dash=(x1,y1,x2,y2)=>`<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="${cMut}" stroke-width="1" stroke-dasharray="4 3"/>`;
+  let svgBody =
+      dash(wfBx(0)+wfBar,wfY(r0),wfBx(1),wfY(r0))
+    + dash(wfBx(1)+wfBar,wfY(r1),wfBx(2),wfY(r1))
+    + dash(wfBx(2)+wfBar,wfY(r2),wfBx(3),wfY(r2))
+    + dash(wfBx(3)+wfBar,wfY(r3),wfBx(4),wfY(r3))
+    + R(wfBx(0),wfY(r0),wfBar,wfHt(r0),cScope,` style="cursor:default" data-tip="Total scope" data-tipv="${+r0.toFixed(1)} FTE" data-tips="current activity workload"`);
+
+  // step 1 + 2 — stacked by transformation type inside each readiness bucket
+  const stack=(col,top,segs,label,fill)=>{ let cum=0, out='';
+    segs.forEach((g,i)=>{ const yT=wfY(top-cum); const h=wfHt(g.fte); cum+=g.fte;
+      out+=R(wfBx(col),yT,wfBar,h,fill,` opacity="${(1-i*0.16).toFixed(2)}" stroke="#fff" stroke-width="1.4" style="cursor:default" data-tip="${E(g.label)}" data-tipv="~${g.fte.toFixed(1)} FTE" data-tips="${label} · ${g.n} initiative${g.n===1?'':'s'}" data-tipl="${tipList(g.items)}"`)
+        + (h>=15?T(wfCx(col),yT+h/2+3.4*fs,String(g.no),9.5,'#fff',800):'');
+    });
+    return out; };
+  svgBody += stack(1,r0,segNow,'addressable now',cGreen);
+  svgBody += stack(2,r1,segLater,'after the enablers',cAmber);
+  // zero-height buckets still need a visible foot so the bridge reads
+  if(nowFte<=0.02)   svgBody += R(wfBx(1),wfY(r0)-1.5,wfBar,3,cMut,' opacity=".45"');
+  if(laterFte<=0.02) svgBody += R(wfBx(2),wfY(r1)-1.5,wfBar,3,cMut,' opacity=".45"');
+  // step 3 — not yet identified
+  svgBody += (notYet>0.02
+    ? R(wfBx(3),wfY(r2),wfBar,wfHt(notYet),cGhost,` stroke="${cMut}" stroke-width="1" stroke-dasharray="3 2" style="cursor:default" data-tip="Not yet identified" data-tipv="~${+notYet.toFixed(1)} FTE" data-tips="top-down potential with no initiative yet"`)
+    : R(wfBx(3),wfY(r2)-1.5,wfBar,3,cMut,' opacity=".45"'));
+  svgBody += R(wfBx(4),wfY(r3),wfBar,wfHt(r3),cScope,` style="cursor:default" data-tip="Remaining scope" data-tipv="~${+r3.toFixed(1)} FTE" data-tips="workload if the full potential were captured"`);
+
+  // value labels
+  svgBody += T(wfCx(0),wfY(r0)-7,''+(+r0.toFixed(1)),11,cTxt,800)
+    + T(wfCx(1),wfY(r0)-7,(nowFte>0.02?'−':'')+nowFte.toFixed(1),11,nowFte>0.02?cGreen:cMut,800)
+    + T(wfCx(2),wfY(r1)-7,(laterFte>0.02?'−':'')+laterFte.toFixed(1),11,laterFte>0.02?cAmber:cMut,800)
+    + T(wfCx(3),wfY(r2)-7,(notYet>0.02?'−':'')+notYet.toFixed(1),11,cMut,800)
+    + T(wfCx(4),wfY(r3)-7,''+(+r3.toFixed(1)),11,cTxt,800);
+
+  // bracket over the three deduction steps — the potential as one figure
+  const bkY=wfPT-19*fs, bkL=wfBx(1)-6, bkR=wfBx(3)+wfBar+6;
+  svgBody = `<path d="M${bkL.toFixed(1)} ${(bkY+6).toFixed(1)} L${bkL.toFixed(1)} ${bkY.toFixed(1)} L${bkR.toFixed(1)} ${bkY.toFixed(1)} L${bkR.toFixed(1)} ${(bkY+6).toFixed(1)}" fill="none" stroke="${cMut}" stroke-width="1"/>`
+    + T((bkL+bkR)/2, bkY-6, `Improvement potential  ~${totalOpt.toFixed(1)} FTE`, 10, cTxt, 800)
+    + svgBody;
+
+  const XL=[['Total scope','today'],['Addressable now','clears the readiness bar'],['After the enablers','scoped but gated'],['Not yet identified','still to scope'],['Remaining scope','if all captured']];
+  svgBody += XL.map((p,i)=>T(wfCx(i),wfPT+wfPH+16,p[0],9.5,i===1?cGreen:i===2?cAmber:cTxt,700)+T(wfCx(i),wfPT+wfPH+28,p[1],8,cMut,600)).join('');
+
+  const svg=`<svg viewBox="0 0 ${wfW} ${wfH}" width="100%" style="max-height:100%;" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">${svgBody}</svg>`;
+  return { svg, grps, cov, totActFte, totalOpt, oppSum, nowFte, laterFte, notYet, wfEnd:r3, cGreen };
+}
+// ===================== TEAM · IMPROVEMENT POTENTIAL TAB =====================
+// The complete potential view in one place: where the effort sits, how much of it is
+// optimisable, which levers carry it, and the scoped opportunities behind the number.
+// Top-down (activity × optimisable share) and bottom-up (Σ opportunities) shown side by side.
+function potentialPage(t){
+  const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const mid=o=>(o.fte[0]+o.fte[1])/2;
+  const W=valueWaterfall(t,{w:900,h:470,pt:54,pb:54,bar:110,fs:1.3});
+  const opps=(t.opps||[]).slice().sort((a,b)=>mid(b)-mid(a));
+  const gMax=Math.max(0.1,...W.grps.map(g=>g.fte));
+
+  const ic={
+    fte:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M16 20v-2a4 4 0 0 0-8 0v2"/><circle cx="12" cy="8" r="3.6"/></svg>',
+    pot:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 17l6-6 4 4 8-8"/><path d="M17 7h4v4"/></svg>',
+    act:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>',
+    imp:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>',
+  };
+  const tile=(label,v,sub,icon,pot)=>`<div class="kpi-box${pot?' pot-box':''}"><div><div class="kpi-eyebrow">${label}</div>
+    <div class="kpi-v">${v}</div><div class="kpi-sub">${sub}</div></div><div class="kpi-icon">${icon}</div></div>`;
+  const kpi=`<div class="kpi-boxes" style="grid-template-columns:repeat(4,1fr);margin-bottom:18px;">
+      ${tile('Total scope',W.totActFte.toFixed(1),'FTE across '+t.activities.length+' activities',ic.fte)}
+      ${tile('Improvement potential',W.totalOpt.toFixed(1),'FTE · '+Math.round(W.totalOpt/Math.max(0.1,W.totActFte)*100)+'% of scope',ic.pot,true)}
+      ${tile('Addressable now',W.nowFte.toFixed(1),'FTE · clears the AI readiness bar',ic.imp,true)}
+      ${tile('After the enablers',W.laterFte.toFixed(1),'FTE · waiting on the foundation',ic.act)}
+    </div>`;
+
+  const wfCard=`<div class="card span4" style="display:flex;flex-direction:column;height:470px;">
+      <div class="ch"><div class="ct">From total scope to full potential</div></div>
+      <div style="flex:1;position:relative;min-height:0;display:flex;align-items:stretch;justify-content:center;">${W.svg}</div>
+    </div>`;
+
+  const levCard=`<div class="card span2" style="display:flex;flex-direction:column;height:470px;">
+      <div class="ch"><div class="ct">Overview of improvement levers</div></div>
+      <div style="margin-top:6px;">
+        ${W.grps.length?W.grps.map((g,i)=>`<div class="pot-lever">
+            <div class="hd"><span class="no" style="background:${g.dot}">${i+1}</span><span class="nm">${esc(g.label)}</span>
+              <span class="ft" style="color:${g.dot}">~${g.fte.toFixed(1)} FTE</span></div>
+            <div class="bar"><i style="width:${g.fte/gMax*100}%;background:${g.dot}"></i></div>
+            <div class="sub">${g.n} initiative${g.n===1?'':'s'} · ${Math.round(g.fte/Math.max(0.1,W.oppSum)*100)}% of what is identified</div>
+          </div>`).join(''):'<div class="rdy-none">No opportunities scoped yet.</div>'}
+      </div>
+    </div>`;
+
+  const oppCard=`<div class="card span6" style="display:flex;flex-direction:column;">
+      <div class="ch"><div class="ct">The opportunities behind the number</div>
+        <button class="ov-gobtn" onclick="setTeamSub('opportunities')">Opportunity detail →</button></div>
+      <table class="pot-tbl" style="margin-top:4px;">
+        <thead><tr><th>Activity</th><th>Lever</th><th>Work nature</th><th>Horizon</th><th>Readiness</th><th class="r">FTE impact</th></tr></thead>
+        <tbody>
+        ${opps.map(o=>{ const h=deriveHorizon(o,t), m=readinessModel(o,t), ok=m.verdict==='act';
+          return `<tr><td class="a">${esc(o.activity||o.name||'Opportunity')}</td>
+            <td>${leverChip(o.lever)}</td>
+            <td><span class="nature nat-${o.nature}" title="${(typeof NAT_LONG!=='undefined'&&NAT_LONG[o.nature])||''}">${o.nature}</span></td>
+            <td><span class="pot-hz"><b>${h.key}</b>${(typeof HORIZON_LABEL!=='undefined'&&HORIZON_LABEL[h.key])||''}</span></td>
+            <td><span class="pot-vd" style="color:${ok?'#1D7044':'#C0392B'}">${ok?'Act now':'Fix readiness first'}</span></td>
+            <td class="f r">${fmtFte(o.fte)}</td></tr>`; }).join('')}
+        <tr class="tot"><td class="a">Identified, bottom-up</td><td colspan="4" style="color:var(--muted);font-size:11px;">&Sigma; of the scoped opportunities · cross-checked against the ~${W.totalOpt.toFixed(1)} FTE top-down potential</td>
+          <td class="f r" style="color:var(--green);">~${W.oppSum.toFixed(1)} FTE</td></tr>
+        </tbody>
+      </table>
+    </div>`;
+
+  return `<div class="dd-section"><div class="eyebrow">Improvement potential</div>
+      ${kpi}<div class="dd6">${wfCard}${levCard}${oppCard}</div></div>`;
+}
 // ===================== TEAM · AI READINESS TAB =====================
 // The lean maturity tab answers "how well does this team run today?". This one answers
 // "can this team put AI to work, and if not, what is in the way?" — the same six dimensions,
 // scored once, read against the minimum AI needs of each. It picks the lever; the potential sizes it.
-const RDY_AXES=[['data','run'],['org','land'],['mgmt','land'],['proc','scale'],['mind','scale'],['cust','aim']];
-const RDY_BAR=3;   // the minimum AI needs of a gating dimension — the same bar readinessModel() uses
+const RDY_BAR=3;   // the AI readiness bar — the same threshold readinessModel() uses
 const rdyEsc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 const rdyDimLabel=k=>((DIMS.find(d=>d.key===k)||{}).label||k);
 function rdyGateMap(t){ const m={}; readinessGates(t).forEach(g=>m[g.key]=g); return m; }
-// lever availability comes straight off the per-opportunity gate — never a second model
-function rdyLevers(t){
-  const now=[], gated=[];
-  ['process','lean','org','auto','aiacc','aienh'].forEach(k=>{ const m=readinessModel({lever:k},t);
-    (m.verdict==='act'?now:gated).push({ k, L:lev(k), limited:m.verdict==='act'&&k==='aienh'&&t.scores.data<RDY_BAR }); });
-  return { now, gated };
-}
 function rdyOpps(t){
   const o=t.opps||[], mid=a=>a.reduce((s,x)=>s+(x.fte[0]+x.fte[1])/2,0);
   const ready=o.filter(x=>readinessModel(x,t).verdict==='act');
@@ -21479,54 +21647,57 @@ function rdyOpps(t){
   return { ready, held, readyFte:mid(ready), heldFte:mid(held) };
 }
 const RDY_Q={ run:'Can AI run at all?', land:'Can the saving be materialised?', scale:'Can the solution be properly embedded?', aim:'Are we investing in the right solution?' };
-// the six scores against one threshold line, grouped under the question each dimension answers
-function rdyChartSvg(t){
+const RDY_GROUPS=[['run',['data']],['land',['org','mgmt']],['scale',['proc','mind']],['aim',['cust']]];
+// Six scores against one threshold, grouped under the question each dimension answers.
+// Built in HTML/CSS rather than SVG so it fills the card at any width, and so every bar can carry a tooltip.
+function rdyChartHTML(t){
   const G=rdyGateMap(t);
-  const W=980,H=530,PL=46,PR=124,PT=30,PB=118;
-  const IW=W-PL-PR, IH=H-PT-PB;
-  const groups=[['run',['data']],['land',['org','mgmt']],['scale',['proc','mind']],['aim',['cust']]];
-  const cols=[]; groups.forEach(([g,ks])=>ks.forEach(k=>cols.push({k,g})));
-  const gap=26, slotW=(IW-gap*(groups.length-1))/cols.length;
-  let x=PL; const pos={};
-  groups.forEach(([g,ks],gi)=>{ const x0=x; ks.forEach(k=>{ pos[k]=x; x+=slotW; }); pos['__'+g]=[x0,x]; if(gi<groups.length-1) x+=gap; });
-  const Y=v=>PT+IH*(1-v/5), bw=Math.min(86,slotW-20);
-  let grid='';
-  for(let v=0;v<=5;v++) grid+=`<line x1="${PL-8}" y1="${Y(v).toFixed(1)}" x2="${W-PR}" y2="${Y(v).toFixed(1)}" stroke="${v===0?'#D0D5DD':'#EEF1F4'}" stroke-width="1"/>`
-    +`<text x="${PL-14}" y="${(Y(v)+3.5).toFixed(1)}" text-anchor="end" font-family="Inter,sans-serif" font-size="9.5" fill="#98A2B3" font-weight="700">${v}</text>`;
-  let bars='';
-  cols.forEach(({k,g})=>{ const v=t.scores[k], below=g!=='aim'&&v<RDY_BAR;
-    const bx=pos[k]+(slotW-bw)/2, by=Y(v), bh=PT+IH-by;
-    if(below) bars+=`<rect x="${bx.toFixed(1)}" y="${Y(RDY_BAR).toFixed(1)}" width="${bw.toFixed(1)}" height="${(by-Y(RDY_BAR)).toFixed(1)}" rx="3" fill="#FBE7E4" stroke="#E4A79F" stroke-width="1" stroke-dasharray="3 3"/>`;
-    bars+=`<rect x="${bx.toFixed(1)}" y="${by.toFixed(1)}" width="${bw.toFixed(1)}" height="${bh.toFixed(1)}" rx="3" fill="${g==='aim'?'#C7CDD4':scoreColor(v)}"/>`
-      +`<text x="${(bx+bw/2).toFixed(1)}" y="${(by-8).toFixed(1)}" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="900" fill="${below?'#C0392B':'#0F2B52'}">${v}</text>`
-      +`<text x="${(bx+bw/2).toFixed(1)}" y="${(PT+IH+17).toFixed(1)}" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" font-weight="700" fill="#475467">${rdyDimLabel(k).replace(' & ',' &amp; ')}</text>`; });
-  const ty=Y(RDY_BAR);
-  const thr=`<line x1="${PL-8}" y1="${ty.toFixed(1)}" x2="${W-PR}" y2="${ty.toFixed(1)}" stroke="#0F2B52" stroke-width="2" stroke-dasharray="6 4"/>`
-    +`<text x="${(W-PR+12).toFixed(1)}" y="${(ty-2).toFixed(1)}" text-anchor="start" font-family="Inter,sans-serif" font-size="10" font-weight="800" letter-spacing=".6" fill="#0F2B52">THE BAR</text>`
-    +`<text x="${(W-PR+12).toFixed(1)}" y="${(ty+11).toFixed(1)}" text-anchor="start" font-family="Inter,sans-serif" font-size="10" font-weight="800" letter-spacing=".6" fill="#0F2B52">AI NEEDS</text>`;
-  let gl='';
-  groups.forEach(([g,ks])=>{ const [x0,x1]=pos['__'+g]; const gd=G[g], col=g==='aim'?'#98A2B3':gd.st.color;
-    const st=g==='aim'?'NOT A GATE':gd.st.label.toUpperCase();
-    const maxCh=Math.max(12,Math.floor((x1-x0-6)/5.6));
-    const lines=[]; let cur='';
-    RDY_Q[g].split(' ').forEach(w=>{ if((cur+' '+w).trim().length>maxCh){ if(cur)lines.push(cur); cur=w; } else cur=(cur+' '+w).trim(); });
-    if(cur) lines.push(cur);
-    const y0=PT+IH+46;
-    gl+=`<line x1="${(x0+4).toFixed(1)}" y1="${(PT+IH+30).toFixed(1)}" x2="${(x1-4).toFixed(1)}" y2="${(PT+IH+30).toFixed(1)}" stroke="${col}" stroke-width="3" stroke-linecap="round"/>`
-      +lines.map((ln,li)=>`<text x="${((x0+x1)/2).toFixed(1)}" y="${(y0+li*13).toFixed(1)}" text-anchor="middle" font-family="Inter,sans-serif" font-size="10.5" font-weight="800" fill="${col}">${ln}</text>`).join('')
-      +`<text x="${((x0+x1)/2).toFixed(1)}" y="${(y0+lines.length*13+3).toFixed(1)}" text-anchor="middle" font-family="Inter,sans-serif" font-size="8.5" font-weight="700" letter-spacing=".7" fill="${col}" opacity=".85">${st}</text>`; });
-  return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-height:100%;" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">${grid}${bars}${thr}${gl}</svg>`;
+  let y=''; for(let v=0;v<=5;v++) y+=`<span style="bottom:${v/5*100}%">${v}</span>`;
+  let gl=''; for(let v=0;v<=5;v++) gl+=`<div class="rdyc-gl${v===0?' zero':''}" style="bottom:${v/5*100}%"></div>`;
+  let cols='', xs='', gs='', ci=0;
+  RDY_GROUPS.forEach(([gk,keys])=>{
+    const g=G[gk], col=gk==='aim'?'#98A2B3':g.st.color, st=gk==='aim'?'NOT A GATE':g.st.label.toUpperCase();
+    const gStart=2+ci;
+    keys.forEach(k=>{
+      const cIdx=2+ci; ci++;
+      const v=t.scores[k], below=gk!=='aim'&&v<RDY_BAR, h=v/5*100;
+      const tipRows=[
+        ['Question', RDY_Q[gk]],
+        ['Verdict', gk==='aim' ? 'Not a gate — it aims the work' : (below?`${RDY_BAR-v} below the AI readiness bar`:'Meets the AI readiness bar')],
+      ];
+      const why=(t.rationale||{})[k]||'';
+      cols+=`<div class="rdyc-col" style="grid-column:${cIdx-1}" data-rk="${k}"`
+        +` data-t="${rdyEsc(rdyDimLabel(k))}" data-v="${v} / 5"`
+        +` data-rows="${rdyEsc(tipRows.map(r=>r[0]+'§'+r[1]).join('¶'))}"`
+        +` data-why="${rdyEsc(why)}">`
+        +(below?`<div class="rdyc-gap" style="bottom:${h}%;height:${(RDY_BAR-v)/5*100}%"></div>`:'')
+        +`<div class="rdyc-b" style="height:${h}%;background:${gk==='aim'?'#C7CDD4':scoreColor(v)}"></div>`
+        +`<div class="rdyc-v" style="bottom:calc(${h}% + 7px);color:${below?'#C0392B':'var(--navy)'}">${v}</div>`
+        +`</div>`;
+      xs+=`<div class="rdyc-x" style="grid-column:${cIdx}">${rdyDimLabel(k)}</div>`;
+    });
+    gs+=`<div class="rdyc-g" style="grid-column:${gStart} / span ${keys.length};color:${col}">`
+      +`<i style="background:${col}"></i><b>${RDY_Q[gk]}</b><small>${st}</small></div>`;
+  });
+  return `<div class="rdyc">
+      <div class="rdyc-y">${y}</div>
+      <div class="rdyc-plot">${gl}${cols}<div class="rdyc-line" style="bottom:${RDY_BAR/5*100}%"></div></div>
+      <div class="rdyc-note"><span style="bottom:${RDY_BAR/5*100}%">AI READINESS<br>BAR</span></div>
+      ${xs}${gs}
+    </div>`;
 }
 function readinessPage(t){
-  const V=aiReadinessVerdict(t), bind=readinessBinding(t), O=rdyOpps(t), L=rdyLevers(t);
+  const V=aiReadinessVerdict(t), bind=readinessBinding(t), O=rdyOpps(t);
   const open=readinessGates(t).filter(g=>g.st.k!=='clear');
   const rel=RDY_RELEASE[bind.key]||'';
   const chart=`<div class="card span4" style="display:flex;flex-direction:column;height:520px;">
-      <div class="ch"><div class="ct">Scored against what AI needs</div>
-        <span style="font-size:10px;color:var(--muted);">every dimension is scored once — the dashed line is the minimum AI needs of it</span></div>
-      <div style="flex:1;min-height:0;display:flex;align-items:center;justify-content:center;">${rdyChartSvg(t)}</div>
+      <div class="ch"><div class="ct">AI readiness by dimension</div>
+        <span style="display:inline-flex;align-items:center;gap:7px;font-size:10px;color:var(--muted);">
+          <i style="width:16px;border-top:2px dashed var(--navy);display:inline-block;"></i>AI readiness bar</span></div>
+      ${rdyChartHTML(t)}
     </div>`;
-  const lv=x=>`<div class="rdy-lv"><i style="background:${x.L.dot};"></i>${rdyEsc(x.L.label)}${x.limited?'<small style="color:#B8620A;">assist only</small>':''}</div>`;
+  const opp=o=>`<div class="rdy-opp"><div class="nm">${rdyEsc(o.activity||o.name||'Opportunity')}</div>
+      <div class="mt">${leverChip(o.lever)}<span class="f">${fmtFte(o.fte)} FTE</span></div></div>`;
   const side=`<div class="card span2" style="display:flex;flex-direction:column;height:520px;">
       <div class="ch"><div class="ct">AI readiness</div><span class="rdy-chip" style="background:${V.bg};color:${V.color};">${V.label}</span></div>
       <div style="display:flex;align-items:baseline;gap:16px;margin-top:10px;">
@@ -21539,12 +21710,12 @@ function readinessPage(t){
         : `Every dimension clears the bar, so nothing here waits on readiness — this is where a first pilot should start.`}</p>
       <div class="rdy-lev2">
         <div>
-          <div class="rdy-eyeb" style="color:#1D7044;">Levers available now</div>
-          ${L.now.map(lv).join('')}
+          <div class="rdy-eyeb" style="color:#1D7044;">Runnable now</div>
+          ${O.ready.length?O.ready.map(opp).join(''):'<div class="rdy-none">Nothing scoped clears the bar yet.</div>'}
         </div>
         <div>
-          <div class="rdy-eyeb" style="color:${L.gated.length?'#C0392B':'var(--muted-2)'};">Behind the bar</div>
-          ${L.gated.length?L.gated.map(lv).join(''):'<div class="rdy-lv" style="color:var(--muted-2);">Nothing is held back</div>'}
+          <div class="rdy-eyeb" style="color:${O.held.length?'#C0392B':'var(--muted-2)'};">Behind the bar</div>
+          ${O.held.length?O.held.map(opp).join(''):'<div class="rdy-none">Nothing is held back.</div>'}
         </div>
       </div>
       <div class="rdy-lev2" style="margin-top:12px;padding-top:12px;">
@@ -21554,6 +21725,19 @@ function readinessPage(t){
       <p class="rdy-p" style="margin-top:auto;padding-top:13px;border-top:1px solid var(--divider);">Operating levers are never gated and carry potential of their own. Readiness picks the lever; the improvement potential sizes it.</p>
     </div>`;
   return `<div class="dd-section"><div class="eyebrow">AI readiness</div><div class="dd6">${chart}${side}</div></div>`;
+}
+// bar tooltips — reuse the shared tooltip the waterfall and the heatmap already use
+function wireReadinessTips(){
+  document.querySelectorAll('#team-sub-content .rdyc-col').forEach(el=>{
+    const rows=(el.dataset.rows||'').split('¶').filter(Boolean)
+      .map(r=>{ const [a,b]=r.split('§'); return `<div class="tip-row"><span>${a}</span><b>${b}</b></div>`; }).join('');
+    const html=`<div class="tip-h"><b>${el.dataset.t}</b><span>${el.dataset.v}</span></div>`
+      + (rows?`<div style="margin-top:7px;">${rows}</div>`:'')
+      + (el.dataset.why?`<div class="tip-sub" style="margin-top:8px;border-top:1px solid rgba(255,255,255,.14);padding-top:7px;">${el.dataset.why}</div>`:'');
+    el.addEventListener('mouseenter', e=>showTipHTML(html, e));
+    el.addEventListener('mousemove', moveTip);
+    el.addEventListener('mouseleave', hideTip);
+  });
 }
 function setTeamSub(k){ teamSub=k; renderTeamContent();
   const sc=document.querySelector('.tdd-bar'); if(sc) sc.scrollIntoView({block:'nearest'});
