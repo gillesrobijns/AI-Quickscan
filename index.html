@@ -603,6 +603,7 @@ html.dark .nat-R{background:#1E2C45;} html.dark .nat-K{background:#2A2440;}
 .rdd-sub .tk i { position:absolute; left:0; top:0; bottom:0; border-radius:3px; }
 .rdd-sub .tk u { position:absolute; top:-3px; bottom:-3px; width:0; border-left:1.5px dashed var(--navy); }
 .rdd-sub .v { text-align:right; font-family:var(--fh); font-weight:900; font-size:12px; }
+.rdd-ins { font-size:11.5px; line-height:1.62; color:var(--muted); }
 .rdd-why { font-size:11.5px; color:var(--muted); line-height:1.6; padding:11px 13px; background:var(--surface-2); border-radius:8px; margin-top:12px; border-left:3px solid var(--green-soft); }
 .rdd-why b { color:var(--text); font-weight:700; }
 /* improvement potential tab */
@@ -21698,28 +21699,159 @@ function rdyChartHTML(t){
       ${xs}${gs}
     </div>`;
 }
-// What a sub-score means for putting AI to work. Bullet 1 is the SAME evidence the lean
-// maturity panel cites (subInsight) — bullet 2 places it against the AI readiness bar, and
-// bullet 3 names the consequence for that dimension's gate. Same evidence, different bar.
-const RDY_CONSEQ={
-  run:  { below:'A model would inherit this — automation and predictive AI stay blocked until it is fixed.',
-          above:'Clean and joined enough for a model to act on.' },
-  land: { below:'Hours freed by AI would be reabsorbed rather than redeployed.',
-          above:'Freed hours can be turned into capacity the business can see.' },
-  scale:{ below:'A pilot might work here, but it would not spread past the people who built it.',
-          above:'A working pilot can spread beyond the team that built it.' },
-  aim:  { below:'Aims the work rather than gating it — it decides which problems are worth solving first.',
-          above:'Aims the work rather than gating it — it decides which problems are worth solving first.' },
-};
-function rdySubInsight(t, dim, name, score, gk){
-  const below=gk!=='aim'&&score<RDY_BAR;
-  let lead='';
-  try{ const b=subInsight(t,dim,name,score)||[]; lead=(b.filter(Boolean)[0]||''); }catch(e){ lead=''; }
-  const bar=gk==='aim'
-    ? `${score}/5 — not held to the AI readiness bar`
-    : (below ? `${score}/5 — <b>${RDY_BAR-score} below the AI readiness bar</b>`
-             : `${score}/5 — ${score>=4?'clears':'sits on'} the AI readiness bar`);
-  return [lead, bar].filter(Boolean);
+// What a sub-score means for putting AI to work — ONE line per sub-dimension, built from the
+// team's own evidence and branched on the score, so a strong score never reads as a weakness.
+// It never restates the score or the bar: both are already on the row and on the chart.
+function rdySubInsight(t, dim, name, score){
+  const lo=score<=2, hi=score>=4;
+  const acts=t.activities||[];
+  const top=[...acts].sort((a,b)=>b.fte-a.fte)[0]||{};
+  const Ks=acts.filter(a=>a.nature==='K'), Ss=acts.filter(a=>a.nature==='S'), Rs=acts.filter(a=>a.nature==='R');
+  const judg=Ks[0]||Ss[0]||top;
+  const rote=[...Rs].sort((a,b)=>b.fte-a.fte)[0]||top;
+  const q=x=>'“'+(x||'the core step')+'”';
+  const cap=x=>x?x.charAt(0).toUpperCase()+x.slice(1):x;
+  const j2=a=>{const b=(a||[]).slice(0,2); return b.length>1?b[0]+' and '+b[1]:(b[0]||'');};
+  const pl=a=>((a||[]).slice(0,2).length>1);                          // two items joined -> plural verb
+  const dn=t.dataNeeds||[];
+  const bad=dn.filter(x=>x[2]!=='reliable'), unavail=dn.filter(x=>x[2]==='unavailable'), good=dn.filter(x=>x[2]==='reliable');
+  const src=x=>(x&&x[1]&&x[1]!=='—')?' from '+x[1]:'';                 // never print the em-dash placeholder
+  const goodList=j2(good.map(x=>x[0].toLowerCase()))||'the core inputs';
+  const badList=j2(bad.map(x=>x[0].toLowerCase()))||'some inputs';
+  const tools=t.tools||[];
+  const shadow=tools.filter(x=>x[2]==='shadow'), gapT=tools.filter(x=>x[2]==='gap'), core=tools.filter(x=>x[2]==='core');
+  const coreList=j2(core.map(x=>x[0]))||'the core system';
+  const shadowList=j2([...shadow,...gapT].map(x=>x[0]))||'spreadsheets';
+  const S=(a,b,c)=>lo?c:(hi?a:b);                                      // high · middle · low
+
+  const M={
+  // ---- DATA · can AI run at all?
+  'Data availability & completeness': S(
+    `Inputs sit where the work happens — ${goodList} ${pl(good)?'are':'is'} there to train on${unavail.length?`; only ${unavail[0][0].toLowerCase()} would still have to be sourced`:''}`,
+    `Enough to start on ${goodList}, but ${badList} needs topping up by hand before a model can use it`,
+    `${cap((unavail[0]||bad[0]||['Key data'])[0])} is not captured, so a model has nothing to learn from`),
+  'Data quality & consistency': S(
+    `Consistent enough to act on a model's output without re-checking it by hand`,
+    `Usable, but ${badList} would need cleaning rules before a model could lean on it`,
+    `${cap((bad[0]||['Core data'])[0])}${src(bad[0])} is unreliable — a model would learn the errors along with the pattern`),
+  'System integration maturity': S(
+    `Data moves between ${coreList} on its own, so a model can sit inside the live process`,
+    `A model could read the data, but its output would land back in the process by hand`,
+    `${gapT[0]?gapT[0][0]+' is not connected':'Systems are siloed'}, so anything AI produces has to be re-keyed to be used`),
+  'Tooling fit': S(
+    `${coreList} can host a model where the work is actually done`,
+    `The core tools fit, but ${shadowList} ${pl([...shadow,...gapT])?'sit':'sits'} outside them — a model built on the core would miss part of the work`,
+    `The work runs on ${shadowList}, so there is no system for a model to plug into`),
+  'Analytics & reporting maturity': S(
+    `The team already reasons from data, so a model's output gets read and challenged rather than trusted blindly`,
+    `Standard reporting is there; the team would need help reading what a model tells them`,
+    `Reporting is manual and backward-looking — no one could tell whether a model was working`),
+  // ---- ORGANISATION · can the saving be materialised?
+  'Structural fit': S(
+    `The structure follows the flow of work, so a saving can be taken in one place`,
+    `The structure only partly follows the work — a saving would be split across teams`,
+    `Work is split across units, so the saving lands in fragments too small to act on`),
+  'E2E ownership': S(
+    `One owner spans the flow and can decide to take the saving`,
+    `Ownership thins where the work crosses teams, so the saving needs negotiating`,
+    `No one owns the end-to-end flow, so no one can bank the gain`),
+  'Spans & layers': S(
+    `Spans let supervisors see freed time and move it`,
+    `Spans are wide enough that redeployment gets little attention`,
+    `Layers absorb the gain before it reaches capacity planning`),
+  'Role clarity & specialisation': S(
+    `Clear roles make it obvious whose work AI changes`,
+    `Roles overlap, so a saving spreads thinly across several people`,
+    `Roles are blurred — hard to say whose time is actually freed`),
+  'Capacity & skills mix': S(
+    `The skills to run and maintain a solution are already in the team`,
+    `The skills sit in pockets; keeping a solution running would need support`,
+    `No one in the team could keep a solution running once the project ends`),
+  // ---- MANAGEMENT SYSTEMS · can the saving be materialised?
+  'KPI relevance & alignment': S(
+    `The team measures what AI would change, so a saving shows up in numbers people already watch`,
+    `KPIs sit beside the work rather than on it — a saving would need a new measure to be seen`,
+    `Nothing measures the hours AI would free, so the gain stays invisible`),
+  'Performance management routines': S(
+    `Routines review performance often enough that freed hours get noticed and reallocated`,
+    `Reviews happen, but not often enough to redeploy capacity as it comes free`,
+    `No routine would pick the freed hours up; they quietly fill with other work`),
+  'Capacity & workload management': S(
+    `Capacity is planned, so hours AI frees can be moved to where they are needed`,
+    `Capacity is tracked at team level only, which makes freed hours hard to place`,
+    `Without a view of capacity, a saving cannot be turned into anything`),
+  'Decision rights & accountability': S(
+    `Someone close to the work can act on what a model recommends without escalating`,
+    `Decision rights are clear at the top but thin where a model would be used`,
+    `It is unclear who may act on a model's output, so recommendations stall`),
+  'Continuous improvement structure': S(
+    `There is a routine that would keep improving a solution after go-live`,
+    `Improvement comes in bursts, and a model would drift between them`,
+    `Nothing would maintain a model once the project team leaves`),
+  // ---- PROCESSES · can the solution be properly embedded?
+  'Process clarity & standardisation': S(
+    `The work is standard enough that one solution covers most cases`,
+    `Standard on the common path; edge cases would still come back to a person`,
+    `Routing rules live with individual operators, so there is no single way of working for AI to learn`),
+  'Value-adding ratio': S(
+    `Most hours already land on value-adding work, so the prize here is sharper judgement rather than volume`,
+    `Recurring admin still absorbs real capacity — clear ground for automation`,
+    `${q(rote.name)} takes ${rote.pct?rote.pct+'% of team effort':'most of the effort'} on admin, the biggest single target for AI here`),
+  'E2E handoff quality': S(
+    `Context carries across handoffs, so a model sees the whole case rather than a fragment`,
+    `Some context is lost at the handoffs, so a model would work from a partial picture`,
+    `Work is re-keyed at each step — AI would automate one link and leave the rest untouched`),
+  'Volume & demand variability': S(
+    `${q(top.name)} runs at ${top.volume||'high, steady volume'} — the repetition is what makes automation pay back`,
+    `Volume supports a business case, but the peaks would need handling`,
+    `Volume is too thin or too erratic for automation to pay back`),
+  'Exception & error rate': S(
+    `Exceptions are rare and root-caused, so a model would not be fighting noise`,
+    `Exceptions still take real effort, so a model needs a clear fallback path`,
+    `So many cases fall outside the norm that a model would hand most of them back`),
+  // ---- MINDSET & BEHAVIOURS · can the solution be properly embedded?
+  'Change openness': S(
+    `The team takes change constructively — adoption is not the risk here`,
+    `Openness is tempered by change fatigue, so adoption needs deliberate support`,
+    `Past roll-outs that added work make it likely a new tool gets worked around`),
+  'AI & digital appetite': S(
+    `The appetite is real — informal pilots already run alongside ${coreList}`,
+    `Curiosity is there but adoption is early; expect a slow start`,
+    `Appetite is low, so a solution would have to be pushed rather than pulled`),
+  'Empowerment & initiative': S(
+    `People can change how they work, so a pilot can spread on its own`,
+    `Initiative exists but needs permission, so spread depends on the sponsor staying close`,
+    `Nothing changes without approval, so a pilot stays where it was built`),
+  'Leadership modeling': S(
+    `Leaders use the new ways of working themselves, which is what makes a pilot stick`,
+    `Leaders endorse change without visibly working that way themselves`,
+    `Leaders are not visibly behind new ways of working, so neither is the team`),
+  'Learning culture': S(
+    `The team picks things up fast, so time-to-competence on a new tool is short`,
+    `Learning happens on the job; a roll-out would need structured support`,
+    `No time is set aside to learn, so the capability stays with whoever built it`),
+  // ---- CUSTOMER · aims the work rather than gating it
+  'Understanding of customer (segments) & expectations': S(
+    `Clear segments mean AI can be aimed at the cases that carry the most value`,
+    `Segments are only loosely defined, which makes it harder to aim AI at the right cases`,
+    `Without segments, AI effort spreads evenly instead of landing where value is`),
+  'Client satisfaction & quality of customer touchpoints': S(
+    `Experience is measured end to end, so the effect of AI on customers would be visible`,
+    `Metrics are collected but seldom acted on, so a change in experience would pass unnoticed`,
+    `There is no closed loop, so a shift in customer experience would go undetected`),
+  'Demand understanding': S(
+    `The drivers of demand are understood, which is what makes prediction worth building`,
+    `Demand is only partly understood, so a predictive case is harder to size`,
+    `Reasons for contact are guesswork, so there is nothing solid to predict from`),
+  'Customer centricity in decisions': S(
+    `Customer impact is an explicit criterion, so AI gets aimed at real pain`,
+    `Customer impact is weighed, but cost usually wins the argument`,
+    `Decisions favour internal convenience, so AI would be aimed at cost alone`),
+  };
+  return M[name] || S(
+    `Strong enough here not to hold ${q(judg.name)} back`,
+    `Workable, but it would need attention before a solution is rolled out`,
+    `Weak enough here to hold a solution back`);
 }
 let rdyDimSel='data';
 function selectRdyDim(k){ rdyDimSel=k; renderTeamContent(); }
@@ -21727,15 +21859,11 @@ function selectRdyDim(k){ rdyDimSel=k; renderTeamContent(); }
 function rdyDimDetail(t){
   const k=rdyDimSel, v=t.scores[k];
   const gk=(RDY_GROUPS.find(g=>g[1].includes(k))||['aim'])[0];
-  const g=rdyGateMap(t)[gk];
-  const aim=gk==='aim', below=!aim&&v<RDY_BAR;
-  const col=aim?'#98A2B3':below?'#C0392B':'#1D7044';
+  const aim=gk==='aim';
   const subs=(t.subs&&t.subs[k])||[];
   return `<div class="rdd-hd">
       <span class="sc" style="background:${scoreColor(v)};color:${scoreText(v)};">${v}</span>
       <div><div class="nm">${rdyDimLabel(k)}</div><div class="q">${RDY_Q[gk]}</div></div>
-      <div class="vd" style="color:${col};">${aim?'Not a gate':below?(RDY_BAR-v)+' below the bar':(v>=4?'Clears the bar':'At the bar')}
-        <div style="font-size:8.5px;font-weight:700;color:var(--muted-2);margin-top:2px;">${aim?'aims the work':RDY_ROLE[gk]}</div></div>
     </div>
     <table class="dgt subins-tbl" style="margin-top:12px;">
       <thead><tr><th>Sub-dimension</th><th>Score</th><th>What it means for AI</th></tr></thead>
@@ -21744,12 +21872,11 @@ function rdyDimDetail(t){
         return `<tr>
           <td class="sd-nm-c" style="${sb?'color:#C0392B;':''}">${sd[0]}</td>
           <td><span class="dg-sc" style="font-size:12px;padding:2px 9px;background:${scoreColor(sv)};color:${scoreText(sv)};">${sv}</span></td>
-          <td class="dg-ins"><ul class="ins-ul">${rdySubInsight(t,k,sd[0],sv,gk).map(b=>`<li>${b}</li>`).join('')}</ul></td>
+          <td class="dg-ins rdd-ins">${rdySubInsight(t,k,sd[0],sv)}</td>
         </tr>`; }).join(''):'<tr><td colspan="3" class="rdy-none">No sub-scores captured for this dimension.</td></tr>'}
       </tbody>
     </table>
-    <div class="rdy-p" style="margin-top:12px;"><b style="color:var(--text);">What this means for AI — </b>${(RDY_CONSEQ[gk]||RDY_CONSEQ.aim)[below?'below':'above']}</div>
-    <div class="rdd-why"><b>Where the score comes from — </b>${rdyEsc((t.rationale||{})[k]||'No rationale captured.')}</div>`;
+    `;
 }
 function readinessPage(t){
   const V=aiReadinessVerdict(t), bind=readinessBinding(t), O=rdyOpps(t);
